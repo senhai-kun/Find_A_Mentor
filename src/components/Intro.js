@@ -11,6 +11,7 @@ const Arrow = styled('div')( () => ({
     position: 'absolute',
     bottom: -10,
     left: '50%',
+    transform: 'translate(-50%, -50%)',
     // right: '50%',
 }) )
 
