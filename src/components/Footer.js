@@ -58,8 +58,8 @@ const Footer = () => {
                             <Typography color="white" >Members:</Typography>
 
                             <Box ml={2} sx={{ opacity: 0.8 }} >
-                                <Typography color="white" >Kenneth Yalong</Typography>
                                 <Typography color="white" >Agustin Agapito</Typography>
+                                <Typography color="white" >Kenneth Yalong</Typography>
                                 <Typography color="white" >Sky DeJesus</Typography>
                             </Box>
 
