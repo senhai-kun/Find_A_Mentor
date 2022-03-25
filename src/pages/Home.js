@@ -23,14 +23,9 @@ const Home = () => {
             <Footer />
 
 
-            {/* <TopMentors /> */}
 
             
-{/*             
-            <div style={{ height: '100vh' }} ></div>
-            <div style={{ height: '100vh' }} ></div>
-            <div style={{ height: '100vh' }} ></div>
-            <div style={{ height: '100vh' }} ></div> */}
+            
                 
         </div>
     )

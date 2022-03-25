@@ -46,7 +46,7 @@ const Footer = () => {
                         </Typography>
                     </Stack>
 
-                    <Stack direction='row' mt={2} spacing={2} flexWrap='wrap' >
+                    <Stack direction='row' mt={2} spacing={2} flexWrap='wrap' justifyContent='center' alignItems="flex-start" >
                         <Box>
                             <Typography color="white" >Lead By:</Typography>
                             <Box ml={2} sx={{ opacity: 0.8 }} >
@@ -61,6 +61,7 @@ const Footer = () => {
                                 <Typography color="white" >Agustin Agapito</Typography>
                                 <Typography color="white" >Kenneth Yalong</Typography>
                                 <Typography color="white" >Sky DeJesus</Typography>
+                                <Typography color="white" >Dennis Acosta Ruiz</Typography>
                             </Box>
 
                         </Box>

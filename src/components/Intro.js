@@ -3,16 +3,14 @@ import { Box, Button, Container, Stack, styled, Typography } from '@mui/material
 import bg from '../asset/map.svg'
 
 const Arrow = styled('div')( () => ({
-    width: 20,
-    height: 20,
-    padding: 2,
+    width: 30,
+    height: 30,
     backgroundColor: 'inherit',
-    transform: 'rotate(45deg)',
+    transform: 'rotate(45deg) translateX(-50%)',
     position: 'absolute',
-    bottom: -10,
+    bottom: -25,
     left: '50%',
-    transform: 'translate(-50%, -50%)',
-    // right: '50%',
+    // top: '10%'
 }) )
 
 const Intro = () => {
