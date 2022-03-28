@@ -31,7 +31,7 @@ const CardDetails = ({ title, sub, notAvail }) => {
 
 const Card = ({ name, course, rating, img, online, meetup, solo }) => {
     return (
-        <Box sx={{ backgroundColor: '#fff', p: { xs: 3, sm: 5 }, borderRadius: 2, m: 3 }} boxShadow={8} >
+        <Box sx={{ backgroundColor: '#fff', p: { xs: 3, sm: 5 }, borderRadius: 2, m: 3 }} boxShadow={20} >
             <Stack direction='row' justifyContent='space-between' >
                 <Box sx={{ mr: 5 }} >
                     <Typography fontWeight='600' >{name}</Typography>
@@ -65,7 +65,6 @@ const Card = ({ name, course, rating, img, online, meetup, solo }) => {
 
 const Recommended = () => {
     const classes = style()
-
     return (
         <Box className={classes.bg} >
             <Container>

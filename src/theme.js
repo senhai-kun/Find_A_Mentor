@@ -1,10 +1,6 @@
 import { createTheme, responsiveFontSizes } from "@mui/material/styles";
 
 let theme = createTheme({
-    palette: {
-        // mode: 'dark'
-        
-    },
     typography: {
         fontFamily: [
             'Lexend', 
@@ -18,6 +14,7 @@ let theme = createTheme({
                 color: '#172E59'
             }
         }
+        
     }
 })
 

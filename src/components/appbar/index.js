@@ -1,8 +1,9 @@
-import { AppBar, Box, Button, Container, Stack, Toolbar, Typography, useScrollTrigger } from '@mui/material'
 import React, { useState } from 'react'
+import { AppBar, Box, Button, Container, Stack, Toolbar, Typography, useScrollTrigger } from '@mui/material'
 import Search from './Search'
 import { Spiral  as Hamburger } from 'hamburger-react'
 import { makeStyles } from '@mui/styles'
+import { useNavigate } from 'react-router-dom'
 
 const style = makeStyles( (theme) => ({
     menuWrapper: {
@@ -33,6 +34,7 @@ const style = makeStyles( (theme) => ({
 }) )
 
 const Header = () => {
+    const navigate = useNavigate()
     const classes = style()
     const [isOpen, setOpen] = useState(false)
 
@@ -40,6 +42,15 @@ const Header = () => {
         disableHysteresis: true,
         threshold: 0
     });
+
+    const handleHome = () => {
+        navigate('/')
+        setOpen(false)
+    }
+    const handleLogin = () => {
+        navigate('/account/login')
+        setOpen(false)
+    }
 
     return (
         <Box  >
@@ -54,11 +65,11 @@ const Header = () => {
                             </Box>
 
                             <Stack direction='row' spacing={2} sx={{ display: { xs: 'none', sm: 'flex' } }} >
-                                <Button type='text' sx={{ color: 'black' }}  >Home</Button>
+                                <Button type='text' sx={{ color: 'black' }} onClick={handleHome} >Home</Button>
                                 <Button type='text' sx={{ color: 'black' }}  >Become a mentor</Button>
-                                <Button type='text' sx={{ color: 'black' }}  >Login</Button>
+                                <Button type='text' sx={{ color: 'black' }} onClick={handleLogin} >Login</Button>
 
-                                <Box sx={{ display: { sm: 'none', md: 'block' } }} >
+                                <Box sx={{ display: { xs: 'none', sm: 'none', md: 'block' } }} >
                                     <Search />                        
                                 </Box>    
                             </Stack>     
@@ -66,11 +77,11 @@ const Header = () => {
                     </Container>
                 </Toolbar>
 
-                <Box className={[ classes.menuWrapper, isOpen ? classes.open : classes.close ]} >
+                <Box className={[ classes.menuWrapper, isOpen ? classes.open : classes.close ]} display={{ xs: 'block', sm: 'none' }} >
                     <Stack direction='column' spacing={5} sx={{ p: 5 }} >
-                        <Button type='text' sx={{ color: 'black' }} size='large'  >Home</Button>
-                        <Button type='text' sx={{ color: 'black' }} size='large'  >Become a mentor</Button>
-                        <Button type='text' sx={{ color: 'black' }} size='large'  >Login</Button>
+                        <Button type='text' sx={{ color: 'black' }} onClick={handleHome} >Home</Button>
+                        <Button type='text' sx={{ color: 'black' }}  >Become a mentor</Button>
+                        <Button type='text' sx={{ color: 'black' }}  onClick={handleLogin} >Login</Button>
                     </Stack>
                 </Box>
                 

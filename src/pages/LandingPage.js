@@ -7,11 +7,10 @@ import Instruction from '../components/Instruction'
 import Recommended from '../components/Recommended'
 import Footer from '../components/Footer'
 
-const Home = () => {
+const LandingPage = () => {
 
     return (
-        <div>
-            <Header />
+        <React.Fragment>
 
             <Intro />
             {/* <Course /> */}
@@ -20,15 +19,10 @@ const Home = () => {
 
             <Recommended />
 
-            <Footer />
-
-
-
-            
-            
+            <Footer />            
                 
-        </div>
+        </React.Fragment>
     )
 }
 
-export default Home
+export default LandingPage

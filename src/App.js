@@ -1,11 +1,15 @@
 import React from "react";
-import Home from "./pages/Home";
+import { BrowserRouter as Router } from 'react-router-dom'
+import Pages from './pages/index'
 
 function App() {
+
   return (
-    <div>
-      <Home />
-    </div>
+    <React.Fragment>
+      <Router>
+        <Pages />
+      </Router>
+    </React.Fragment>
   );
 }
 
