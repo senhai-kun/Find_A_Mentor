@@ -1,6 +1,6 @@
 import React from 'react'
-import { Box, Button, Stack, TextField, Typography, InputAdornment, Divider, Avatar, styled, Checkbox } from '@mui/material'
-import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
+import { Box, Button, Stack, TextField, Typography, InputAdornment, Divider, styled, Checkbox } from '@mui/material'
+import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import KeyOutlinedIcon from '@mui/icons-material/KeyOutlined';
 import loginbg from '../asset/login.svg'
 import registerbg from '../asset/register.svg'
@@ -27,7 +27,7 @@ const Login = () => {
 
     return (
         <Box width='100%' position='relative' >
-            <Box width={{ xs: '80%', sm: '50%', md: '80%', lg: '50%' }} m='auto' position='absolute' top='50%' left='50%' sx={{ transform: 'translate(-50%,-50%)' }} >
+            <Box component='form' width={{ xs: '80%', sm: '50%', md: '80%', lg: '50%' }} m='auto' position='absolute' top='50%' left='50%' sx={{ transform: 'translate(-50%,-50%)', pt: { xs: 20, sm: 10, md: 0 }, pb: { xs: 20, sm: 10, md: 0 } }} >
                 <Typography variant='h4' fontWeight='600' color={textColorPri} mb={1} >Login to your account.</Typography>
 
                 <Typography color={textColorPri} sx={{ opacity: 0.8 }} mb={5} variant="body1" >Welcome Back! Please enter your details.</Typography>
@@ -35,12 +35,12 @@ const Login = () => {
                 <Stack direction='column' spacing={3} width='100%' mt={2} >
                     <TextField 
                         size='medium'
-                        placeholder='Username'
+                        placeholder='Email'
                         type='text'
                         InputProps={{
                             startAdornment: (
                                 <InputAdornment position='start' >
-                                    <AccountCircleOutlinedIcon color='primary' />
+                                    <EmailOutlinedIcon color='primary' />
                                 </InputAdornment>
                             ),
                             sx: { color: textColorPri }
@@ -71,7 +71,7 @@ const Login = () => {
                 </Stack>
 
                 <Stack direction='row' alignItems='center' mb={3} >
-                    <Checkbox color='primary' sx={{ opacity: 0.6 }} />
+                    <Checkbox color='primary'  />
                     <Typography color={textColorPri} >Remember me</Typography>
                 </Stack>
                 
@@ -98,9 +98,9 @@ const Image = styled('img')( () => ({
 const Bg = () => {
     const location = useLocation()
     return (
-        <Box bgcolor={location.pathname === '/account/login' ? textColorPri : "#ed6c02"} width='100%' display={{ xs: 'none', sm: 'none', md: 'block' }} textAlign='center' position='relative' >
+        <Box bgcolor={location.pathname === '/account/login' ? textColorPri : "#db5704"} width='100%' display={{ xs: 'none', sm: 'none', md: 'block' }} textAlign='center' position='relative' >
             <Image 
-                alt='asd'
+                alt='Search Logo'
                 src={ location.pathname === '/account/login' ? loginbg : registerbg }
             />
         </Box>
