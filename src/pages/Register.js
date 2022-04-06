@@ -47,7 +47,7 @@ const Register = () => {
 
     return (
         <Box width='100%' position='relative' >
-            <Box component='form' noValidate  width={{ xs: '80%', sm: '70%', md: '80%', lg: '70%' }} m='auto' position='absolute' top='50%' left='50%' sx={{ transform: 'translate(-50%,-50%)', pt: { xs: 20, sm: 10, md: 0 }, pb: { xs: 20, sm: 10, md: 0 } }} >
+            <Box component='form' noValidate  width={{ xs: '80%', sm: '70%', md: '80%', lg: '70%' }} m='auto' position='absolute' top='50%' left='50%' sx={{ transform: 'translate(-50%,-50%)', pt: { xs: 20, sm: 10, md: 0 } }} >
                 <Typography variant='h4' fontWeight='600' color={textColorPri} mb={1} >Create an account.</Typography>
 
                 <Typography color={textColorPri} sx={{ opacity: 0.8 }} mb={5} variant="body1" >Let's get started by signing up to your account!</Typography>
@@ -98,7 +98,7 @@ const Register = () => {
                         
                 <Divider sx={{ mt: 3, mb: 3, color: textColorPri }} light={false} >Already have an account?</Divider>
                 
-                <Button onClick={ () => navigate('/account/login') } variant='outlined' fullWidth size='large' color="primary" >Sign in</Button>
+                <Button onClick={ () => navigate('/account/login') } variant='outlined' fullWidth size='large' color="primary" sx={{ mb: { xs: 10, sm: 0 } }} >Sign in</Button>
            
             </Box>
         </Box>
