@@ -2,7 +2,7 @@ import React from "react";
 import { Routes, Route, useLocation } from 'react-router-dom'
 import Header from "../components/appbar";
 import LandingPage from "./LandingPage";
-import LoginContainer from './Login';
+import LoginContainer from './LoginPage';
 
 const Pages = () => {
     const location = useLocation()

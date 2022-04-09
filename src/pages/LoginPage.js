@@ -4,7 +4,7 @@ import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import KeyOutlinedIcon from '@mui/icons-material/KeyOutlined';
 import loginbg from '../asset/login.svg'
 import registerbg from '../asset/register.svg'
-import Register from './Register';
+import Register from './RegisterPage';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const textColorPri = '#144ec7';
