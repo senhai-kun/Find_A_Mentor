@@ -1,19 +1,34 @@
 import React from 'react'
 import { Box, Button, Container, Stack, styled, Typography } from '@mui/material'
+import { makeStyles } from '@mui/styles'
 import bg from '../asset/map.svg'
+import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
+import { useNavigate } from 'react-router-dom';
 
-const Arrow = styled('div')( () => ({
-    width: 30,
-    height: 30,
-    backgroundColor: 'inherit',
-    transform: 'rotate(45deg) translateX(-50%)',
-    position: 'absolute',
-    bottom: -25,
-    left: '50%',
-    // top: '10%'
+const animation = makeStyles( (theme) => ({
+    float: {
+        animation: `$pulse 3s ${theme.transitions.easing.easeInOut} infinite`
+    },
+    "@keyframes pulse": {
+        "0%": {
+            transform: "translatey(0px)",
+            // boxShadow: "0 0 0 0 rgba(0, 0, 0, 0.7)"
+        },
+        "50%": {
+            transform: "translatey(5px)",
+            // boxShadow: "0 0 0 10px rgba(0, 0, 0, 0)"
+        },
+        "100%": {
+            transform: "translatey(0px)",
+            // boxShadow: "0 0 0 0 rgba(0, 0, 0, 0)"
+        }
+    }
 }) )
 
+
 const Intro = () => {
+    const navigate = useNavigate();
+    const classes = animation();
 
     const scroller = () => {
         const section = document.querySelector('.section')
@@ -25,17 +40,20 @@ const Intro = () => {
         <Container>
             <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent='space-between' >
                 <Stack sx={{ width: '100%', m: 'auto', pt: { xs: 20, sm: 10 }, pb: 5  }} alignItems='center' >
-                    <Typography variant='h2' fontWeight='bold' align='center' >
-                        Find Your Mentor
-                    </Typography>
-                    <Typography align='center' >Search, Browse, Pick, Schedule and Learn!</Typography>
-                    {/* <Typography align='center' >Want to ace your next job interview? Successfully build your startup? Itching to learn high-demand skills? Work smart with an online mentor or coach by your side to offer expert advice and guidance to match your zeal. Become unstoppable using MentorCruise.</Typography> */}
+                        <Typography variant='h2' fontWeight='bold' align='center' >
+                            Find Your <Box component='span' color='#0277bd' >Mentor</Box>
+                        </Typography>
                     
-                    <Box sx={{ mt: 4, zIndex: 1 }} >
-                        <Button variant="contained" size='large' onClick={scroller} >
-                            Get Started!
+
+                    <Typography align='center' >Search, Browse, Pick, Schedule and Learn!</Typography>
+                   
+                    <Stack sx={{ mt: 10, zIndex: 1 }} direction={{ xs: 'column', sm: 'row' }} spacing={2} >
+                        <Button variant="contained" size='large' onClick={scroller} endIcon={<KeyboardArrowDownRoundedIcon />} >
+                            Get Started
                         </Button>
-                    </Box>
+
+                        <Button color='inherit' size='large' onClick={ () => navigate('/account/register') } >Sign Up</Button>
+                    </Stack>
                 </Stack>
 
                 <Box
@@ -54,13 +72,18 @@ const Intro = () => {
                         },
 
                     }}
+                    display={{
+                        xs: 'none',
+                        sm: 'block'
+                    }}
+
                 >
                     <img 
                         src={bg}
                         alt="logo"
                         width='100%'
                         height='100%'
-                   
+                        className={classes.float}
                     />
                 </Box>
             </Stack>
@@ -71,5 +94,17 @@ const Intro = () => {
     </Box>
     )
 }
+
+const Arrow = styled('div')( () => ({
+    width: 30,
+    height: 30,
+    backgroundColor: 'inherit',
+    transform: 'rotate(45deg) translateX(-50%)',
+    position: 'absolute',
+    bottom: -25,
+    left: '50%',
+    // top: '10%'
+}) )
+
 
 export default Intro

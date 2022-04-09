@@ -3,7 +3,7 @@ import { Button, Typography } from '@mui/material'
 // import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 import { MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents } from 'react-leaflet'
 import L from 'leaflet'
-import Route from './map/Route'
+import Route from './Route'
 import 'leaflet-routing-machine'
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css'
 

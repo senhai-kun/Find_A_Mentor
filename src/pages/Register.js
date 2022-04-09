@@ -46,8 +46,8 @@ const Register = () => {
     const navigate = useNavigate()
 
     return (
-        <Box width='100%' position='relative' sx={{ mt: { xs: 40, sm: 10, md: 0 }  }} >
-            <Box component='form' noValidate  width={{ xs: '80%', sm: '70%', md: '80%', lg: '70%' }} m='auto' position='absolute' top='50%' left='50%' sx={{ transform: 'translate(-50%,-50%)' }} >
+        <Box width='100%' >
+            <Box width={{ xs: '80%', sm: '70%', md: '80%', lg: '70%' }} m="auto" pt={5} pb={5} >
                 <Typography variant='h4' fontWeight='600' color={textColorPri} mb={1} >Create an account.</Typography>
 
                 <Typography color={textColorPri} sx={{ opacity: 0.8 }} mb={5} variant="body1" >Let's get started by signing up to your account!</Typography>
