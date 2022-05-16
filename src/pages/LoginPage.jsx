@@ -19,7 +19,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import LoadingButton from "@mui/lab/LoadingButton";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { loginUser, login } from "../redux/slicer/authSlice";
+import { loginUser } from "../redux/slicer/authSlice";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { Helmet } from "react-helmet";
@@ -56,12 +56,12 @@ const Login = () => {
             setSubmit(true);
             try {
                 const fetch = await axios.post(`${baseUrl}/account/login`, e, {
-                    headers: {
-                        withCredentials: true,
-                        // credentials: "same-origin",
-                        // "Access-Control-Allow-Credentials": true,
-                    },
                     withCredentials: true,
+                    // headers: {
+                    //     // withCredentials: true,
+                    //     // credentials: "same-origin",
+                    //     // "Access-Control-Allow-Credentials": true,
+                    // },
                 });
 
                 console.log(fetch.data);
