@@ -105,11 +105,10 @@ const revalidateSession = createAsyncThunk(
         try {
             const ses = await axios.get(`${baseUrl}/account/ses`, {
                 headers: {
-                    'Authorization': `Bearer ${data}`,
+                    Authorization: `Bearer ${data}`,
                 },
                 withCredentials: true,
             });
-            console.log(ses.data);
             // get user data
             // dispatch(login(ses.data));
             dispatch(setUser(ses.data.user));

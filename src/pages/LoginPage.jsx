@@ -57,6 +57,7 @@ const Login = () => {
             try {
                 const fetch = await axios.post(`${baseUrl}/account/login`, e, {
                     withCredentials: true,
+
                     // headers: {
                     //     // withCredentials: true,
                     //     // credentials: "same-origin",
@@ -275,10 +276,7 @@ const LoginContainer = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (
-            localStorage.getItem("fam-id") &&
-            document.cookie.includes("fam-ses")
-        ) {
+        if (localStorage.getItem("fam-id")) {
             navigate("/", { replace: true });
         }
     }, [navigate]);

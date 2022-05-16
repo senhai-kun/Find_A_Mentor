@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import baseUrl from "../../utils/baseUrl";
 
 const initialState = {
     user: null,
@@ -11,7 +12,7 @@ export const uploadImage = createAsyncThunk(
     async (data, { dispatch }) => {
         try {
             const result = await axios.post(
-                "http://localhost:5000/account/uploadimage",
+                `${baseUrl}/account/uploadimage`,
                 { img: data },
                 {
                     headers: {
