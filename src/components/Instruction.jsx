@@ -37,7 +37,7 @@ const Card = ({ title, icon }) => {
 
 const Instruction = () => {
     return (
-        <Container className='section' sx={{ scrollMargin: 80 }} >
+        <Container >
 
            <Typography variant='h3' fontWeight='500' sx={{ mb: 8, mt: 10 }}  >Learn that new skill, improve yourself more, land your dream career.</Typography>
 

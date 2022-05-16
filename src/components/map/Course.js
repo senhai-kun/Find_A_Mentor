@@ -45,7 +45,7 @@ const Course = () => {
   const [start, setStart] = useState([38.9072, -77.0369])
   const [end, setEnd] = useState([15.46677395480803, 121.01492637492784])
 
-  const [ position, setPosition ] = useState([15.291548895526345, 120.95430940389635])
+  const [ position, setPosition ] = useState([14.5995, 120.9842])
 
   const getUserLocation = () => {
     if(navigator.geolocation) {
@@ -101,7 +101,8 @@ const Course = () => {
     // } )
     // map.setView({ distanceTo: 120.5887029 })
     // map.flyToBounds(position,{ duration: 1.5}})
-    mape.flyTo(position, 13, { duration: 1.5 })
+
+    // mape.flyTo(position, 13, { duration: 1.5 })
     console.log(mape.distance([15.291548895526345, 121.01492637492784], position).toFixed(0)/1000,'km');
     // console.log(map);
    
@@ -120,11 +121,11 @@ const Course = () => {
   }
 
   return (
-    <div style={{ width: '100%', height: 400 }} >
+    <React.Fragment  >
       {/* <Typography variant='h5' fontWeight='bold' mt={5} mb={2}  >Find the right Mentor for you</Typography> */}
-      <Typography variant='h5' fontWeight='bold' mt={5} mb={2}  >Find A Mentor Near You</Typography>
+      {/* <Typography variant='h5' fontWeight='bold' mt={5} mb={2}  >Find A Mentor Near You</Typography>
       <Button variant='contained' sx={{ mb: 5 }} onClick={getUserLocation} >Get Location</Button>
-      <Button variant='contained' color='info' sx={{ mb: 5 }} onClick={handleCheck} >Check Route</Button>
+      <Button variant='contained' color='info' sx={{ mb: 5 }} onClick={handleCheck} >Check Route</Button> */}
       {/* <GoogleMap
         mapContainerStyle={containerStyle}
         center={center}
@@ -134,7 +135,17 @@ const Course = () => {
       >
      
       </GoogleMap> */}
-      <MapContainer whenCreated={map => setMap(map)} center={position} zoom={13} zoomAnimationThreshold={1000}   >
+      <MapContainer 
+        whenCreated={map => setMap(map)} 
+        center={position} 
+        zoom={10} 
+        zoomAnimationThreshold={1000} 
+        scrollWheelZoom={false}   
+        dragging={false}
+        doubleClickZoom={false}
+        zoomSnap={false}
+        zoomDelta={false}
+      >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -149,7 +160,7 @@ const Course = () => {
         { check && <Route start={position} end={end} />}
       </MapContainer>
 
-    </div>
+    </React.Fragment>
   )
 }
 

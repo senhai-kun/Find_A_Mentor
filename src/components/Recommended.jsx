@@ -2,11 +2,12 @@ import { Avatar, Box, Button, Container, Divider, Rating, Stack, Typography } fr
 import { makeStyles } from '@mui/styles'
 import { styled } from '@mui/system'
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const style = makeStyles( (theme) => ({
     bg: {
         backgroundColor: '#ffffff',
-        backgroundImage: 'linear-gradient(180deg, #ffffff 0%, #b7e8ee 61%, #92d7f2 100%)',
+        backgroundImage: 'linear-gradient(180deg, #f3f7fa 0%, #b7e8ee 61%, #92d7f2 100%)',
         marginTop: theme.spacing(20),
         paddingBottom: theme.spacing(10)
     }
@@ -31,7 +32,7 @@ const CardDetails = ({ title, sub, notAvail }) => {
 
 const Card = ({ name, course, rating, img, online, meetup, solo }) => {
     return (
-        <Box sx={{ backgroundColor: '#fff', p: { xs: 3, sm: 5 }, borderRadius: 2, m: 3 }} boxShadow={20} >
+        <Box sx={{ backgroundColor: '#fff', p: { xs: 3, sm: 5 }, borderRadius: 2, m: 3 }} boxShadow={10} >
             <Stack direction='row' justifyContent='space-between' >
                 <Box sx={{ mr: 5 }} >
                     <Typography fontWeight='600' >{name}</Typography>
@@ -51,12 +52,14 @@ const Card = ({ name, course, rating, img, online, meetup, solo }) => {
             
             <Divider sx={{ mt: 2, mb: 2 }} />
             
-            <CardDetails title="Online/Meetup" sub="Available"  />
-            <CardDetails title="Solo" sub="Not" notAvail />
-            <CardDetails title="Groups" sub="3/5"  />
+            <Box mt={5} >
+                <CardDetails title="Online/Meetup" sub="Available"  />
+                {/* <CardDetails title="Solo" sub="Not" notAvail /> */}
+                <CardDetails title="Groups" sub="3/5"  />
 
-            <CardDetails title="Mentorship Solo" sub="20k/month"  />
-            <CardDetails title="Mentorship Group" sub="5k/month"  />
+                <CardDetails title="Mentorship Solo" sub="20k/month"  />
+                <CardDetails title="Mentorship Group" sub="5k/month"  />
+            </Box>
 
             <Button variant="contained" sx={{ mt: 3 }} fullWidth >Apply Now</Button>
         </Box>
@@ -64,7 +67,10 @@ const Card = ({ name, course, rating, img, online, meetup, solo }) => {
 }
 
 const Recommended = () => {
-    const classes = style()
+    const classes = style();
+
+    const navigate = useNavigate();
+
     return (
         <Box className={classes.bg} >
             <Container>
@@ -88,7 +94,7 @@ const Recommended = () => {
 
                 </Box>
 
-                <Typography variant="h3" align='center' fontWeight='400' sx={{ mt: 10, mb: 10 }} >An arsenal of industry veterans and mentoring packages at a flexible price.</Typography>
+                <Typography className='section' variant="h3" align='center' fontWeight='400' sx={{ mt: 10, mb: 10, scrollMargin: 80  }} >An arsenal of industry veterans and mentoring packages at a flexible price.</Typography>
                         
                 <Stack direction='row' justifyContent='center' flexWrap="wrap" flexGrow={1} >
                     <Card 
@@ -114,8 +120,7 @@ const Recommended = () => {
                 </Stack>
                 
                 <Box sx={{ textAlign: 'center', mt: 5 }} >
-                    <Button variant='contained' color='secondary' size='large' sx={{ width: { xs: '80%', sm: '40%' } }} >Find my mentor</Button>
-
+                    <Button onClick={ () => navigate('/search', { replace: true }) } variant='contained' color='secondary' size='large' sx={{ width: { xs: '80%', sm: '40%' } }} >Find my mentor</Button>
                 </Box>
             
             </Container>
