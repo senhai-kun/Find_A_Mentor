@@ -15,7 +15,6 @@ import {
     Typography,
     useScrollTrigger,
 } from "@mui/material";
-import Search from "./Search";
 import { Spiral as Hamburger } from "hamburger-react";
 import { makeStyles } from "@mui/styles";
 import { useNavigate, useLocation } from "react-router-dom";
