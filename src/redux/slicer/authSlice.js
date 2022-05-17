@@ -83,21 +83,6 @@ export const checkSession = () => (dispatch) => {
     }
 };
 
-export const logoutUser = (navigate) => async (dispatch) => {
-    try {
-        const out = await axios.get(`${baseUrl}/account/logout`);
-
-        navigate(0);
-        console.log("Logout to all tabs");
-        localStorage.removeItem("fam-id");
-        dispatch(clearUser());
-        dispatch(logout(out.data.logout));
-    } catch (e) {
-        navigate("/");
-        console.log("Error", e);
-    }
-};
-
 const revalidateSession = createAsyncThunk(
     "auth/account/ses",
     async (data, { dispatch }) => {
@@ -123,13 +108,28 @@ const revalidateSession = createAsyncThunk(
     }
 );
 
+export const logoutUser = (navigate) => async (dispatch) => {
+    try {
+        const out = await axios.get(`${baseUrl}/account/logout`);
+
+        navigate(0);
+        console.log("Logout to all tabs");
+        localStorage.removeItem("fam-id");
+        dispatch(clearUser());
+        dispatch(logout(out.data.logout));
+    } catch (e) {
+        navigate("/");
+        console.log("Error", e);
+    }
+};
+
 export const loginUser =
-    ({ success, navigate, location }) =>
+    ({ navigate, location }) =>
     async (dispatch) => {
         console.log("Apply refresh to all tabs after login"); // only need to refresh page to validate login
 
         dispatch(reload());
-        dispatch(login(success));
+        navigate(0);
         location.state !== null
             ? navigate(location.state) // navigate to last visited page
             : navigate("/search");

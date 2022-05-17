@@ -1,16 +1,12 @@
 import { useCallback, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import {
-    checkSession,
-    loginUser,
-    logoutUser,
-    persistLogin,
-} from "../redux/slicer/authSlice";
+import { checkSession, loginUser, logoutUser } from "../redux/slicer/authSlice";
 
 const GlobalListener = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const location = useLocation();
 
     const persist = useCallback(() => {
         dispatch(checkSession());
@@ -31,14 +27,14 @@ const GlobalListener = () => {
 
             if (e.key === "fam-id" && e.newValue && !e.oldValue) {
                 // Refresh page to authenticate login
-                dispatch(loginUser(navigate));
+                dispatch(loginUser({ navigate, location }));
             }
         };
 
         window.addEventListener("storage", listener);
 
         return () => window.removeEventListener("storage", listener);
-    }, [dispatch, navigate]);
+    }, [dispatch, navigate, location]);
 
     return null;
 };
