@@ -124,10 +124,11 @@ export const logoutUser = (navigate) => async (dispatch) => {
 };
 
 export const loginUser =
-    ({ navigate, location }) =>
+    ({ success, navigate, location }) =>
     async (dispatch) => {
         console.log("Apply refresh to all tabs after login"); // only need to refresh page to validate login
-
+           
+        dispatch(login(success));
         dispatch(reload());
         navigate(0);
         location.state !== null
