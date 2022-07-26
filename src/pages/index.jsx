@@ -9,6 +9,7 @@ import UserProfile from "./UserProfile";
 import RequireAuth from "../utils/RequireAuth";
 import Settings from "./Settings";
 import Protected from "../utils/Protected";
+
 const Pages = () => {
     const { pathname } = useLocation();
 

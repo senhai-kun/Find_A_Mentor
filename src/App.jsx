@@ -7,10 +7,11 @@ import GlobalListener from "./utils/GlobalListener";
 import ScrollToTop from "./utils/ScrollToTop";
 
 // notes
-// add href to helmet
+// add href to helmet (DONE)
 // clear logs
 
 function App() {
+
     return (
         <React.Fragment>
             <Provider store={store}>

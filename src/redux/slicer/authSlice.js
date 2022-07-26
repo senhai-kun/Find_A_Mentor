@@ -78,7 +78,7 @@ export const checkSession = () => (dispatch) => {
         dispatch(clearUser());
     } else {
         console.log("Session Found!");
-        dispatch(validateLogin());
+        // dispatch(validateLogin());
         dispatch(revalidateSession(localStorage.getItem("fam-id")));
     }
 };
@@ -130,7 +130,6 @@ export const loginUser =
            
         dispatch(login(success));
         dispatch(reload());
-        navigate(0);
         location.state !== null
             ? navigate(location.state) // navigate to last visited page
             : navigate("/search");
@@ -144,5 +143,6 @@ export const registerUser =
         dispatch(login(data));
         navigate("/account/profile/monica");
     };
+
 
 export default authSlice.reducer;

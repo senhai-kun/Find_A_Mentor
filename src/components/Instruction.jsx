@@ -37,26 +37,28 @@ const Card = ({ title, icon }) => {
 
 const Instruction = () => {
     return (
-        <Container >
+        <Box  >
+            <Container>
 
-           <Typography variant='h3' fontWeight='500' sx={{ mb: 8, mt: 10 }}  >Learn that new skill, improve yourself more, land your dream career.</Typography>
+            <Typography variant='h3' fontWeight='500' sx={{ mb: 8, mt: 10 }}  >Learn that new skill, improve yourself more, land your dream career.</Typography>
 
-            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ xs: 'center', sm: 'baseline' }}  >
-                <Card 
-                    title='Expert mentorship. One text away.' 
-                    icon={chat}
-                />
-                <Card 
-                    title='Shortcut growth through expert guidance.' 
-                    icon={shortcut}
-                />
-                <Card 
-                    title='Talk it out. Face-to-face.' 
-                    icon={video}
-                />
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ xs: 'center', sm: 'baseline' }}  >
+                    <Card 
+                        title='Expert mentorship. One text away.' 
+                        icon={chat}
+                    />
+                    <Card 
+                        title='Shortcut growth through expert guidance.' 
+                        icon={shortcut}
+                    />
+                    <Card 
+                        title='Talk it out. Face-to-face.' 
+                        icon={video}
+                    />
 
-            </Stack>
-        </Container>
+                </Stack>
+            </Container>
+        </Box>
     )
 }
 

@@ -23,17 +23,7 @@ import AppbarSpace from "../utils/AppbarSpace";
 import EventNoteRoundedIcon from "@mui/icons-material/EventNoteRounded";
 import LibraryAddCheckOutlinedIcon from "@mui/icons-material/LibraryAddCheckOutlined";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import { Helmet } from "react-helmet";
-
-const Header = ({ title }) => {
-    return (
-        <Helmet>
-            <meta charSet="utf-8" />
-            <title>{title}</title>
-            <link rel="canonical" href="http://mysite.com/example" />
-        </Helmet>
-    );
-};
+import Header from "../components/Header";
 
 const Details = ({ icon, label, variant, size }) => {
     return (
@@ -94,7 +84,7 @@ const UserProfile = () => {
                                     Conversion Copywriter & Marketing consultant
                                 </Typography>
                             </Box>
-
+                            
                             <Stack direction="row" flexWrap="wrap" gap={1}>
                                 <Details
                                     label="Manila, PH"

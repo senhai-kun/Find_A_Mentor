@@ -113,7 +113,7 @@ const Course = () => {
   // const position = [15.1449853, 120.5887029]
 
   // if( !isLoaded ) return "Loading maps"
-  const [check, setCheck] = useState(false)
+  const [check, setCheck] = useState(true)
 
   const handleCheck = () => {
     setCheck(true)
@@ -137,14 +137,14 @@ const Course = () => {
       </GoogleMap> */}
       <MapContainer 
         whenCreated={map => setMap(map)} 
-        center={position} 
-        zoom={10} 
+        center={end} 
+        zoom={12} 
         zoomAnimationThreshold={1000} 
         scrollWheelZoom={false}   
-        dragging={false}
+        dragging={true}
         doubleClickZoom={false}
-        zoomSnap={false}
-        zoomDelta={false}
+        zoomSnap={true}
+        zoomDelta={true}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

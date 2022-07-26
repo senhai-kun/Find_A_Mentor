@@ -1,10 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import {
     Avatar,
     Box,
     Button,
     Chip,
     Container,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
     Stack,
     Typography,
 } from "@mui/material";
@@ -21,17 +26,8 @@ import Course from "../components/map/Course";
 import AppbarSpace from "../utils/AppbarSpace";
 import { useSelector } from "react-redux";
 import { isLoggedIn } from "../redux/slicer/authSlice";
-import { Helmet } from "react-helmet";
-
-const Header = ({ title }) => {
-    return (
-        <Helmet>
-            <meta charSet="utf-8" />
-            <title>{title} - Mentor</title>
-            <link rel="canonical" href="http://mysite.com/example" />
-        </Helmet>
-    );
-};
+import Header from "../components/Header";
+import { useNavigate } from "react-router-dom";
 
 const Details = ({ icon, label, variant }) => {
     return (
@@ -48,14 +44,56 @@ const Details = ({ icon, label, variant }) => {
     );
 };
 
+const ApplyModal = ({ open, close }) => {
+
+    return (
+        <div>
+            <Dialog open={open} >
+                <DialogTitle id="responsive-dialog-title">
+                    Apply as Monica's Mentee
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Let Google help apps determine location. This means sending anonymous
+                        location data to Google, even when no apps are running.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button variant="outlined" color="inherit" autoFocus onClick={close}>
+                        Close
+                    </Button>
+                    <Button variant="contained" autoFocus onClick={close} >
+                        Agree
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </div>
+    )
+}
+
 const MentorProfile = () => {
     const userLoggedIn = useSelector(isLoggedIn);
+    const navigate = useNavigate();
+    const [ apply, setApply ] = useState(false);
+
+    const handleApply = () => {
+        if ( !userLoggedIn ) {
+            navigate("/account/login")
+        } else {
+            setApply(true);
+        }
+    }
+
+    const handleCloseApply = () => {
+        setApply(false);
+    }
 
     return (
         <React.Fragment>
             <Header title="Monica Badiu" />
             <AppbarSpace divider />
 
+            <ApplyModal open={apply} close={handleCloseApply} />
             <Container sx={{ mt: 10 }}>
                 <Stack
                     direction={{ xs: "column", sm: "column", md: "row" }}
@@ -123,8 +161,9 @@ const MentorProfile = () => {
                             color="warning"
                             fullWidth
                             size="large"
+                            onClick={handleApply}
                         >
-                            Apply as Mentee
+                            { userLoggedIn ? "Apply as Mentee" : "Login to Apply!" }
                         </Button>
 
                         <Typography variant="h6" align="center" mt={1}>

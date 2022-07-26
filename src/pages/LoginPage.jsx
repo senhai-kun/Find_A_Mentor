@@ -57,12 +57,6 @@ const Login = () => {
             try {
                 const fetch = await axios.post(`${baseUrl}/account/login`, e, {
                     withCredentials: true,
-
-                    // headers: {
-                    //     // withCredentials: true,
-                    //     // credentials: "same-origin",
-                    //     // "Access-Control-Allow-Credentials": true,
-                    // },
                 });
 
                 console.log(fetch.data);

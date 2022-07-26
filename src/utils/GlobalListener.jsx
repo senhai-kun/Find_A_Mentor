@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { checkSession, loginUser, logoutUser } from "../redux/slicer/authSlice";
+import { checkSession, logoutUser } from "../redux/slicer/authSlice";
 
 const GlobalListener = () => {
     const navigate = useNavigate();
@@ -15,7 +15,7 @@ const GlobalListener = () => {
     useEffect(() => {
         // always check if session is available on every navigate page
         persist();
-    }, [navigate]);
+    }, [navigate, persist]);
 
     useEffect(() => {
         const listener = (e) => {
@@ -27,7 +27,7 @@ const GlobalListener = () => {
 
             if (e.key === "fam-id" && e.newValue && !e.oldValue) {
                 // Refresh page to authenticate login
-                dispatch(loginUser({ navigate, location }));
+                navigate(0);
             }
         };
 

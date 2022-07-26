@@ -87,7 +87,7 @@ const SearchCard = ({ fullname, img, course, rating, isVerified, bookmark, about
                             { bookmark ? <BookmarkRoundedIcon fontSize="inherit" color='primary' /> : <BookmarkBorderOutlinedIcon fontSize="inherit" color='primary' />}
                         </IconButton>
 
-                        <Button>More</Button>
+                        {/* <Button>More</Button> */}
                     </Stack>
                 </Stack>
             </Paper>

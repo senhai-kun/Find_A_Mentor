@@ -13,17 +13,7 @@ import Footer from "../components/Footer";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import PageLoader from "../components/search/PageLoader";
 import AppbarSpace from "../utils/AppbarSpace";
-import { Helmet } from "react-helmet";
-
-const Header = () => {
-    return (
-        <Helmet>
-            <meta charSet="utf-8" />
-            <title>Find Your Mentor</title>
-            <link rel="canonical" href="http://mysite.com/example" />
-        </Helmet>
-    );
-};
+import Header from "../components/Header";
 
 const SearchPage = () => {
     const [data, setData] = useState(false);
@@ -40,7 +30,7 @@ const SearchPage = () => {
 
     return (
         <React.Fragment>
-            <Header />
+            <Header title="Search a Mentor" />
 
             <AppbarSpace divider />
 

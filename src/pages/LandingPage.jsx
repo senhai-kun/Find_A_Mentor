@@ -5,28 +5,19 @@ import Recommended from "../components/Recommended";
 import Discover from "../components/Discover";
 import Footer from "../components/Footer";
 import { Helmet } from "react-helmet";
-
-const Header = () => {
-    return (
-        <Helmet>
-            <meta charSet="utf-8" />
-            <title>Mentor</title>
-            <link rel="canonical" href="https://find-mentor.vercel.app" />
-        </Helmet>
-    );
-};
+import Header from "../components/Header";
 
 const LandingPage = () => {
     return (
         <React.Fragment>
-            <Header />
+            <Header title="Mentor" />
             <Intro />
 
             <Instruction />
 
             <Recommended />
 
-            <Discover />
+            {/* <Discover /> */}
 
             <Footer />
         </React.Fragment>

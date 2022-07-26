@@ -16,7 +16,6 @@ import {
 import InsertPhotoOutlinedIcon from "@mui/icons-material/InsertPhotoOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import AppbarSpace from "../utils/AppbarSpace";
-import { Helmet } from "react-helmet";
 import { useDispatch, useSelector } from "react-redux";
 import {
     loadComponent,
@@ -24,23 +23,12 @@ import {
     userData,
 } from "../redux/slicer/userSlice";
 import LoadingButton from "@mui/lab/LoadingButton";
+import Header from "../components/Header";
 
 const Input = styled("input")({
     display: "none",
 });
 
-const Header = ({ title }) => {
-    return (
-        <Helmet>
-            <meta charSet="utf-8" />
-            <title>{title}</title>
-            <link
-                rel="canonical"
-                href={`https://find-mentor.vercel.app/account/settings`}
-            />
-        </Helmet>
-    );
-};
 
 const Settings = () => {
     const dispatch = useDispatch();
@@ -229,6 +217,8 @@ const ProfileImage = ({ profileImage, previewImg }) => {
                         <Button
                             endIcon={<InsertPhotoOutlinedIcon />}
                             component="span"
+                            variant="outlined"
+                            color="info"
                         >
                             Upload
                         </Button>
