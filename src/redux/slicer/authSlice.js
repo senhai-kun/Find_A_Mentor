@@ -20,6 +20,7 @@ export const authSlice = createSlice({
             state.loggedIn = true;
         },
         login: (state, action) => {
+            console.log("login: ", action.payload)
             state.loggedIn = action.payload.success;
             state.isLoading = false;
             action.payload.success &&
@@ -110,13 +111,15 @@ const revalidateSession = createAsyncThunk(
 
 export const logoutUser = (navigate) => async (dispatch) => {
     try {
-        const out = await axios.get(`${baseUrl}/account/logout`);
-
-        navigate(0);
-        console.log("Logout to all tabs");
-        localStorage.removeItem("fam-id");
-        dispatch(clearUser());
-        dispatch(logout(out.data.logout));
+        const res = await axios.get(`${baseUrl}/account/logout`);
+        
+        if ( res.data.logout ) {
+            localStorage.removeItem("fam-id");
+            dispatch(clearUser());
+            dispatch(logout(res.data.logout));
+            console.log("Logout to all tabs");
+            navigate(0);
+        }
     } catch (e) {
         navigate("/");
         console.log("Error", e);
@@ -126,10 +129,10 @@ export const logoutUser = (navigate) => async (dispatch) => {
 export const loginUser =
     ({ success, navigate, location }) =>
     async (dispatch) => {
-        console.log("Apply refresh to all tabs after login"); // only need to refresh page to validate login
+        console.log("Apply refresh to all tabs after login", success); // only need to refresh page to validate login
            
         dispatch(login(success));
-        dispatch(reload());
+        // dispatch(reload());
         location.state !== null
             ? navigate(location.state) // navigate to last visited page
             : navigate("/search");

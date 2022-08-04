@@ -144,20 +144,6 @@ const Settings = () => {
                                     defaultValue="2000-10-23"
                                 />
                             </Box>
-
-                            <Stack
-                                direction="row"
-                                gap={1}
-                                alignItems="center"
-                                width="100%"
-                            >
-                                <Checkbox
-                                    value={isMentor}
-                                    onChange={() => setIsMentor(!isMentor)}
-                                    // color="warning"
-                                />
-                                <Typography>I am a mentor</Typography>
-                            </Stack>
                         </Stack>
 
                         <ProfileImage

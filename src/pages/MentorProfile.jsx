@@ -22,7 +22,7 @@ import TwitterIcon from "@mui/icons-material/Twitter";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import Footer from "../components/Footer";
-import Course from "../components/map/Course";
+import Location from "../components/map/Location";
 import AppbarSpace from "../utils/AppbarSpace";
 import { useSelector } from "react-redux";
 import { isLoggedIn } from "../redux/slicer/authSlice";
@@ -197,7 +197,7 @@ const MentorProfile = () => {
                                     justifyContent="center"
                                 >
                                     {userLoggedIn ? (
-                                        <Course />
+                                        <Location />
                                     ) : (
                                         <Box>
                                             <Typography

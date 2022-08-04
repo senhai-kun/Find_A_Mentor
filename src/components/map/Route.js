@@ -3,6 +3,7 @@ import { createControlComponent } from "@react-leaflet/core";
 import "leaflet-routing-machine";
 
 const createRoutineMachineLayer = (props) => {
+  console.log("props: ", props)
   const instance = L.Routing.control({
     // waypoints: [
     //   L.latLng(33.52001088075479, 36.26829385757446),
@@ -19,13 +20,21 @@ const createRoutineMachineLayer = (props) => {
     fitSelectedRoutes: true,
     showAlternatives: false,
     // summaryTemplate: false
+
   });
 
-  console.log(instance)
-  console.log(instance?._selectedRoute?.summary?.totalTime)
+  console.log("instance: ",instance)
+
   instance.on('routesfound', e => {
-    console.log(e.routes[0].summary);
+    // console.log(e.routes[0].summary);
+    // console.log("routes: ", e)
+    props.summary(e.routes[0].summary)
   })
+
+  instance.on('routeserror', e => {
+    console.log("routingstart: ", e);
+  })
+
 
   return instance;
 };

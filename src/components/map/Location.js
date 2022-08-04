@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Button, Typography } from '@mui/material'
+import { Button, Typography, Box } from '@mui/material'
 // import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 import { MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents } from 'react-leaflet'
 import L from 'leaflet'
 import Route from './Route'
+import formatTime from "humanize-duration"
 import 'leaflet-routing-machine'
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css'
 
@@ -19,7 +20,7 @@ const center = {
 
 const libraries = ['places'];
 
-const Course = () => {
+const Location = () => {
   // const { isLoaded, loadError } = useJsApiLoader({
   //   googleMapsApiKey: '',
   //   libraries
@@ -44,6 +45,7 @@ const Course = () => {
   // Start-End points for the routing machine:
   const [start, setStart] = useState([38.9072, -77.0369])
   const [end, setEnd] = useState([15.46677395480803, 121.01492637492784])
+  const [ summary, setSummary ] = useState({})
 
   const [ position, setPosition ] = useState([14.5995, 120.9842])
 
@@ -87,23 +89,24 @@ const Course = () => {
         console.log(time);
         
       },
-      locationfound: e => {
-        console.log(e);
+      locationfound: (locationfound) => {
+        console.log("location found: ",locationfound);
       },
-      layeradd: e => {
-        console.log(e.layer?._route?.summary?.totalTime)
-      },
+      // layeradd: e => {
+      //   console.log(e.layer?._route?.summary?.totalTime)
+      //   console.log("layeradd: ",e)
+      // },
       
     })
     
-    // map.on('locationfound', (e) => {
-    //   console.log(e);
-    // } )
+    mape.on('locationfound', (e) => {
+      console.log(e);
+    } )
     // map.setView({ distanceTo: 120.5887029 })
     // map.flyToBounds(position,{ duration: 1.5}})
 
     // mape.flyTo(position, 13, { duration: 1.5 })
-    console.log(mape.distance([15.291548895526345, 121.01492637492784], position).toFixed(0)/1000,'km');
+    console.log("calculated distance: ",mape.distance([15.291548895526345, 121.01492637492784], position).toFixed(0)/1000,'km');
     // console.log(map);
    
     // map.latLngToLayerPoint
@@ -121,8 +124,9 @@ const Course = () => {
   }
 
   return (
-    <React.Fragment  >
-      {/* <Typography variant='h5' fontWeight='bold' mt={5} mb={2}  >Find the right Mentor for you</Typography> */}
+    <Box sx={{ width: "100%", height: "100%"}} >
+      <Typography variant='body' fontWeight='bold'   >{formatTime(summary.totalTime * 1000)}</Typography>
+      
       {/* <Typography variant='h5' fontWeight='bold' mt={5} mb={2}  >Find A Mentor Near You</Typography>
       <Button variant='contained' sx={{ mb: 5 }} onClick={getUserLocation} >Get Location</Button>
       <Button variant='contained' color='info' sx={{ mb: 5 }} onClick={handleCheck} >Check Route</Button> */}
@@ -145,11 +149,16 @@ const Course = () => {
         doubleClickZoom={false}
         zoomSnap={true}
         zoomDelta={true}
+        
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          
+          eventHandlers={{
+            locationfound: (e) => {
+              console.log("loc: ", e)
+            }
+          }}
         />
         <MyMap />
         <Marker position={position} >
@@ -157,11 +166,12 @@ const Course = () => {
             A pretty CSS3 popup. <br /> Easily customizable.
           </Popup>
         </Marker>
-        { check && <Route start={position} end={end} />}
+        { check && <Route start={position} end={end} summary={setSummary} />}
       </MapContainer>
+      
 
-    </React.Fragment>
+    </Box>
   )
 }
 
-export default Course
+export default Location;

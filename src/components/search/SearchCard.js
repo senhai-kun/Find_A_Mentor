@@ -35,7 +35,7 @@ const SearchCard = ({ fullname, img, course, rating, isVerified, bookmark, about
                                 <Typography>({rating}) ratings</Typography>
                             </Stack>
 
-                            <Button onClick={ () => navigate(`/mentor/profile/${fullname}`)} size='small' color='success' sx={{ mt: 1 }} >Go To Profile</Button>
+                            {/* <Button onClick={ () => navigate(`/mentor/profile/${fullname}`)} size='small' color='success' sx={{ mt: 1 }} >Go To Profile</Button> */}
 
                             <Divider sx={{ mt: 2 }} />
 
