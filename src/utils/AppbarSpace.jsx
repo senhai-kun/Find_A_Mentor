@@ -1,7 +1,7 @@
 import { Box, Divider } from "@mui/material";
 import React from "react";
 
-const AppbarSpace = ({ color, divider }) => {
+const AppbarSpace = ({ color, divider, disable }) => {
     return (
         <React.Fragment>
             <Box
@@ -12,7 +12,7 @@ const AppbarSpace = ({ color, divider }) => {
                 // bgcolor={bgColor ? bgColor : "inherit"}
             ></Box>
 
-            {divider && <Divider sx={{ mt: { xs: 0, sm: 1 } }} />}
+            <Divider sx={{ mt: { xs: 0, sm: 1 }, display: divider ? "block" : "none" }} />
         </React.Fragment>
     );
 };

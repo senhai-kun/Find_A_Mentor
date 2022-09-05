@@ -20,11 +20,9 @@ export const authSlice = createSlice({
             state.loggedIn = true;
         },
         login: (state, action) => {
-            console.log("login: ", action.payload)
             state.loggedIn = action.payload.success;
             state.isLoading = false;
-            action.payload.success &&
-                localStorage.setItem("fam-id", action.payload.famID);
+            action.payload.success && localStorage.setItem("fam-id", action.payload.famID);
         },
         logout: (state) => {
             state.loggedIn = false;
@@ -129,7 +127,7 @@ export const logoutUser = (navigate) => async (dispatch) => {
 export const loginUser =
     ({ success, navigate, location }) =>
     async (dispatch) => {
-        console.log("Apply refresh to all tabs after login", success); // only need to refresh page to validate login
+        console.log("Apply refresh to all tabs after login"); // only need to refresh page to validate login
            
         dispatch(login(success));
         // dispatch(reload());

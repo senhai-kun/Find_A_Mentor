@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
     Box,
     Button,
@@ -7,14 +7,10 @@ import {
     Typography,
     InputAdornment,
     Divider,
-    styled,
     Checkbox,
 } from "@mui/material";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import KeyOutlinedIcon from "@mui/icons-material/KeyOutlined";
-import loginbg from "../asset/login.svg";
-import registerbg from "../asset/register.svg";
-import Register from "./RegisterPage";
 import { useLocation, useNavigate } from "react-router-dom";
 import LoadingButton from "@mui/lab/LoadingButton";
 import axios from "axios";
@@ -22,9 +18,9 @@ import { useDispatch } from "react-redux";
 import { loginUser } from "../redux/slicer/authSlice";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import { Helmet } from "react-helmet";
 import baseUrl from "../utils/baseUrl";
 
+// const textColorPri = "#144ec7";
 const textColorPri = "#144ec7";
 const textColorSec = "#0028f3";
 
@@ -59,7 +55,6 @@ const Login = () => {
                     withCredentials: true,
                 });
 
-                console.log(fetch.data);
                 dispatch(
                     loginUser({ success: fetch.data, navigate, location })
                 );
@@ -218,86 +213,4 @@ const Login = () => {
     );
 };
 
-const Image = styled("img")(() => ({
-    width: "80%",
-    height: "80%",
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%,-50%)",
-}));
-
-const Bg = () => {
-    const location = useLocation();
-    return (
-        <Box
-            bgcolor={
-                location.pathname === "/account/login"
-                    ? textColorPri
-                    : "#ed6c02"
-            }
-            width={{ sm: "0%", md: "60%" }}
-            position="relative"
-            minHeight="100vh"
-        >
-            <Image
-                alt="Search Logo"
-                src={
-                    location.pathname === "/account/login"
-                        ? loginbg
-                        : registerbg
-                }
-            />
-        </Box>
-    );
-};
-
-const Header = ({ title, path }) => {
-    return (
-        <Helmet>
-            <meta charSet="utf-8" />
-            <title>{title}</title>
-            <link
-                rel="canonical"
-                href={`https://find-mentor.vercel.app${path}`}
-            />
-        </Helmet>
-    );
-};
-
-const LoginContainer = () => {
-    const { pathname } = useLocation();
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        if (localStorage.getItem("fam-id")) {
-            navigate("/", { replace: true });
-        }
-    }, [navigate]);
-
-    return (
-        <React.Fragment>
-            <Header
-                title={
-                    pathname === "/account/login"
-                        ? "Login - Mentor"
-                        : "Register - Mentor"
-                }
-                path={pathname}
-            />
-            <Stack
-                direction={
-                    pathname === "/account/login" ? "row-reverse" : "row"
-                }
-                // direction="row"
-                alignItems="center"
-            >
-                <Bg />
-
-                {pathname === "/account/login" ? <Login /> : <Register />}
-            </Stack>
-        </React.Fragment>
-    );
-};
-
-export default LoginContainer;
+export default Login;

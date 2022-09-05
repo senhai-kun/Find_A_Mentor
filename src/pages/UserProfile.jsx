@@ -24,6 +24,8 @@ import EventNoteRoundedIcon from "@mui/icons-material/EventNoteRounded";
 import LibraryAddCheckOutlinedIcon from "@mui/icons-material/LibraryAddCheckOutlined";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import Header from "../components/Header";
+import { useSelector } from "react-redux";
+import { userData } from "../redux/slicer/userSlice";
 
 const Details = ({ icon, label, variant, size }) => {
     return (
@@ -39,7 +41,11 @@ const Details = ({ icon, label, variant, size }) => {
 };
 
 const UserProfile = () => {
-    return (
+    const user = useSelector(userData);
+
+    console.log(user)
+
+    return (    
         <React.Fragment>
             <Header title="Dashboard" />
             <AppbarSpace divider />
@@ -52,8 +58,8 @@ const UserProfile = () => {
                 >
                     <Stack direction={{ xs: "column", sm: "row" }} spacing={3}>
                         <Avatar
-                            src="https://cdn.mentorcruise.com/cache/f2dd6a7a12e4f3903dc1c9b9cea331e3/0fc92fa3aea69827/53dd96af93a989e04300c14eb9695c9c.jpg"
-                            alt="Monica Badiu"
+                            src={user.img}
+                            alt={user.firstname}
                             sx={{ width: 63, height: 63 }}
                         />
 
@@ -68,21 +74,21 @@ const UserProfile = () => {
                                     gap={1}
                                     alignItems="start"
                                 >
-                                    <Typography variant="h5" fontWeight="bold">
-                                        Monica Badiu
+                                    <Typography variant="h5" fontWeight="bold" textTransform="capitalize">
+                                        {user.firstname} {user.lastname}
                                     </Typography>
-                                    <Chip
+                                    { user.ismentor && <Chip
                                         icon={<VerifiedIcon />}
                                         label="Verified Mentor"
                                         color="success"
                                         size="small"
                                         variant="outlined"
-                                    />
+                                    />}
                                 </Stack>
 
-                                <Typography variant="inherit" fontWeight={300}>
+                                {/* <Typography variant="inherit" fontWeight={300}>
                                     Conversion Copywriter & Marketing consultant
-                                </Typography>
+                                </Typography> */}
                             </Box>
                             
                             <Stack direction="row" flexWrap="wrap" gap={1}>

@@ -3,8 +3,8 @@ import { BrowserRouter as Router } from "react-router-dom";
 import Pages from "./pages/index";
 import { store } from "./redux/store";
 import { Provider } from "react-redux";
-import GlobalListener from "./utils/GlobalListener";
-import ScrollToTop from "./utils/ScrollToTop";
+import GlobalListener from "./globals/GlobalListener";
+import ScrollToTop from "./globals/ScrollToTop";
 
 // notes
 // add href to helmet (DONE)

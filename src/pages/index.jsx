@@ -2,13 +2,14 @@ import React from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import Header from "../components/appbar";
 import LandingPage from "./LandingPage";
-import LoginContainer from "./LoginPage";
+import LoginContainer from "./LoginContainer";
 import MentorProfile from "./MentorProfile";
 import SearchPage from "./SearchPage";
 import UserProfile from "./UserProfile";
-import RequireAuth from "../utils/RequireAuth";
 import Settings from "./Settings";
-import Protected from "../utils/Protected";
+import GettingStarted from "./GettingStarted";
+import RequireAuth from "../auth/RequireAuth";
+import Protected from "../auth/Protected";
 
 const Pages = () => {
     const { pathname } = useLocation();
@@ -23,12 +24,9 @@ const Pages = () => {
                 <Route path="/search" element={<SearchPage />} />
                 <Route
                     path="/mentor/profile/:name"
-                    element={
-                        // <RequireAuth>
-                        <MentorProfile />
-                        // </RequireAuth>
-                    }
+                    element={<MentorProfile />}
                 />
+                <Route path="/getting_started" element={<GettingStarted />} />
                 <Route
                     path="/account/profile/:name"
                     element={
