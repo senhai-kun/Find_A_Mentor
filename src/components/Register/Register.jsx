@@ -27,7 +27,7 @@ import axios from "axios";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { useDispatch } from "react-redux";
-import { login } from "../../redux/slicer/authSlice";
+import { login, registerUser } from "../../redux/slicer/authSlice";
 import baseUrl from "../../utils/baseUrl";
 
 import AlertMessage from './AlertMessage';
@@ -119,15 +119,6 @@ const Register = () => {
     const [error, setError] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
 
-    useEffect(() => {
-        if (
-            localStorage.getItem("fam-id") &&
-            document.cookie.includes("fam-ses")
-        ) {
-            navigate("/", { replace: true });
-        }
-    }, [navigate]);
-
     return (
         <Box width="100%">
             <Formik
@@ -149,9 +140,8 @@ const Register = () => {
                                 withCredentials: true,
                             }
                         );
-     
-                        dispatch(login(fetch.data));
-                        navigate("/search");
+                        
+                        dispatch(registerUser({ navigate, data: fetch.data }));
                         
                     } catch (err) {
                         // dispatch(login(e.response.data.success));

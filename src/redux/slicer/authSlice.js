@@ -84,7 +84,7 @@ export const checkSession = () => (dispatch) => {
 
 const revalidateSession = createAsyncThunk(
     "auth/account/ses",
-    async (data, { dispatch }) => {
+    async (data, { dispatch, signal }) => {
         dispatch(reload());
         try {
             const ses = await axios.get(`${baseUrl}/account/ses`, {
@@ -92,6 +92,7 @@ const revalidateSession = createAsyncThunk(
                     Authorization: `Bearer ${data}`,
                 },
                 withCredentials: true,
+                signal
             });
             // get user data
             // dispatch(login(ses.data));
@@ -106,6 +107,29 @@ const revalidateSession = createAsyncThunk(
         }
     }
 );
+
+export const loginUser = ({ success, navigate, location }) => async (dispatch) => {
+        console.log("Apply refresh to all tabs after login"); // only need to refresh page to validate login
+           
+        dispatch(login(success));
+        // dispatch(reload());
+        location.state !== null
+            ? navigate(location.state) // navigate to last visited page
+            : navigate("/search");
+        // dispatch(checkSession());
+    };
+
+export const registerUser = ({ navigate, data }) => (dispatch) => {
+        console.log("registering user....");
+        dispatch(login(data));
+
+        if ( data.ismentor ) {
+            navigate("/getting_started");
+        } else {
+            navigate("/search");
+        }
+    };
+
 
 export const logoutUser = (navigate) => async (dispatch) => {
     try {
@@ -123,27 +147,5 @@ export const logoutUser = (navigate) => async (dispatch) => {
         console.log("Error", e);
     }
 };
-
-export const loginUser =
-    ({ success, navigate, location }) =>
-    async (dispatch) => {
-        console.log("Apply refresh to all tabs after login"); // only need to refresh page to validate login
-           
-        dispatch(login(success));
-        // dispatch(reload());
-        location.state !== null
-            ? navigate(location.state) // navigate to last visited page
-            : navigate("/search");
-        // dispatch(checkSession());
-    };
-
-export const registerUser =
-    ({ navigate, data }) =>
-    (dispatch) => {
-        console.log("registering user....");
-        dispatch(login(data));
-        navigate("/account/profile/monica");
-    };
-
 
 export default authSlice.reducer;

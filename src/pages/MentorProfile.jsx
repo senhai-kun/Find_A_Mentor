@@ -44,18 +44,17 @@ const Details = ({ icon, label, variant }) => {
     );
 };
 
-const ApplyModal = ({ open, close }) => {
+const EnrollModal = ({ open, close }) => {
 
     return (
         <div>
             <Dialog open={open} >
-                <DialogTitle id="responsive-dialog-title">
-                    Apply as Monica's Mentee
+                <DialogTitle>
+                    Enroll as Monica's Mentee
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Let Google help apps determine location. This means sending anonymous
-                        location data to Google, even when no apps are running.
+                        By Enrolling as Monica's Mentee you must agree to terms and agreement.
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
@@ -63,7 +62,7 @@ const ApplyModal = ({ open, close }) => {
                         Close
                     </Button>
                     <Button variant="contained" autoFocus onClick={close} >
-                        Agree
+                        Enroll
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -93,7 +92,7 @@ const MentorProfile = () => {
             <Header title="Monica Badiu" />
             <AppbarSpace divider />
 
-            <ApplyModal open={apply} close={handleCloseApply} />
+            <EnrollModal open={apply} close={handleCloseApply} />
             <Container sx={{ mt: 10 }}>
                 <Stack
                     direction={{ xs: "column", sm: "column", md: "row" }}
@@ -163,7 +162,7 @@ const MentorProfile = () => {
                             size="large"
                             onClick={handleApply}
                         >
-                            { userLoggedIn ? "Apply as Mentee" : "Login to Apply!" }
+                            { userLoggedIn ? "Enroll as Mentee" : "Login to Apply!" }
                         </Button>
 
                         <Typography variant="h6" align="center" mt={1}>

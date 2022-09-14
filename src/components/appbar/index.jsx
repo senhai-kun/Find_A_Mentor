@@ -321,7 +321,7 @@ const UserMenu = () => {
                         <AccountCircleRoundedIcon color="primary" />
                     </ListItemIcon>
                     <ListItemText>
-                        <Typography>Profile</Typography>
+                        <Typography>Account</Typography>
                     </ListItemText>
                 </MenuItem>
 

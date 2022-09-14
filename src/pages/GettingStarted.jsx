@@ -8,25 +8,58 @@ import {
     Stack,
     TextField,
     Typography,
+    useMediaQuery,
 } from "@mui/material";
 import AppbarSpace from "../utils/AppbarSpace";
 import PlaylistAddRoundedIcon from "@mui/icons-material/PlaylistAddRounded";
 import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
 
+/*
+    notes: 
+        counting words (done)
+        skills accepts spaces
+*/
+
 const GettingStarted = () => {
-    const [category, setCategory] = useState("");
+
+    const mobile = useMediaQuery( theme => theme.breakpoints.down("sm") );
+
+    const [category, setCategory] = useState("placeholder");
+    // const [customCategory, setCustomCategory] = useState("");
+
     const [skill, setSkill] = useState([]);
     const [addSkill, setAddSkill] = useState("");
+    const [about, setAbout] = useState("");
+    const [count, setCount] = useState(0);
 
     const handleDeleteSkill = (indexToDelete) => {
         setSkill( currentList => currentList.filter( (_, index) => indexToDelete !== index ) )
+    }
+
+    const handleChange = (e) => {
+        setAbout(e.target.value)
+
+        // count input words
+        setCount(e.target.value.trim().split(" ").filter( i => i !== "" ).length );
+
+    }
+
+    const handleSubmit = e => {
+        e.preventDefault();
+
+        if( category === "placeholder" || count < 100 || skill.length < 3) {
+            console.log("don't submit")
+        } else {
+            console.log("submit form", skill.length);
+        }
+        
     }
 
     return (
         <React.Fragment>
             <AppbarSpace divider />
 
-            <Container sx={{ p: 2 }}>
+            <Container sx={{ p: 2 }} component="form" onSubmit={handleSubmit}>
                 <Typography variant="h3" fontWeight="bold" pt={4}>
                     Getting Started
                 </Typography>
@@ -40,17 +73,12 @@ const GettingStarted = () => {
                         size="small"
                         select
                         sx={{ pt: 3 }}
-                        // SelectProps={
-                        //     {
-                        //         // sx: { borderRadius: 10, fontWeight: 300 },
-                        //         // multiple: true
-                        //     }
-                        // }
                         value={category}
                         onChange={(e) => setCategory(e.target.value)}
                         fullWidth
+                        required
                     >
-                        <MenuItem autoFocus={false} divider value="All">
+                        <MenuItem disabled divider value="placeholder">
                             Please select your category
                         </MenuItem>
                         <MenuItem value="Engineering">Engineering</MenuItem>
@@ -64,16 +92,20 @@ const GettingStarted = () => {
                             Product & Marketing
                         </MenuItem>
 
-                        <Stack pl={2} pr={2} pt={1} gap={2}>
-                            <TextField
-                                size="small"
-                                placeholder="Your field is not on the list? Enter it here."
-                            />
+                        {/* <MenuItem value={customCategory} > */}
+                            {/* <Stack pl={2} pr={2} pt={1} gap={2}>
+                                <TextField
+                                    size="small"
+                                    placeholder="Your field is not on the list? Enter it here."
+                                    value={customCategory}
+                                    onChange={ e => setCustomCategory(e.target.value)}
+                                />
 
-                            <Button variant="contained" color="info">
-                                Add
-                            </Button>
-                        </Stack>
+                                <Button variant="contained" color="info" onClick={ () => setCategory(customCategory) } >
+                                    Add
+                                </Button>
+                            </Stack> */}
+                        {/* </MenuItem> */}
                     </TextField>
                 </Box>
 
@@ -81,6 +113,7 @@ const GettingStarted = () => {
                     <Typography variant="h4" >
                         What are your Skills?
                     </Typography>
+                    <Typography sx={{ opacity: 0.6 }} >You can give as many as you can with minimum of 3.</Typography>
                     <Stack direction="row" gap={1} flexWrap="wrap" pt={3}>
                         {skill.map((skill, index) => (
                             <Chip
@@ -120,15 +153,25 @@ const GettingStarted = () => {
                 </Box>
 
                 <Box pt={5}>
-                    <Typography variant="h3">Tell us About Yourself</Typography>
+                    <Typography variant="h3">Tell us About Yourself </Typography>
+                    
+                    <Typography align="right" pt={3}>{count} words to count</Typography>
 
                     <TextField 
                         multiline
-                        minRows={10}
+                        minRows={ mobile ? 4 : 8 }
                         fullWidth
-                        sx={{ pt: 3 }}
+                        value={about}
+                        onChange={handleChange}
                         color="info"
+                        placeholder="Write about yourself in less than 100words to impress your mentees..."
+                        required
                     />
+
+                </Box>
+
+                <Box pt={3} textAlign="right" >
+                    <Button type="submit" variant="contained" >Finish</Button>
                 </Box>
             </Container>
         </React.Fragment>

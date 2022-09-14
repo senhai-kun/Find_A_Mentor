@@ -15,6 +15,7 @@ const GlobalListener = () => {
     useEffect(() => {
         // always check if session is available on every navigate page
         persist();
+        console.count("Checks session!")
     }, [navigate, persist]);
 
     useEffect(() => {
