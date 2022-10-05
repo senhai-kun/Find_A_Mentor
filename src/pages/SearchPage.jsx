@@ -75,7 +75,7 @@ const SearchPage = () => {
                                 />
                             </React.Fragment>
                         ))}
-                        <SearchCard
+                        {/* <SearchCard
                             fullname="Monica Badiu"
                             isVerified
                             img="https://cdn.mentorcruise.com/cache/f2dd6a7a12e4f3903dc1c9b9cea331e3/0fc92fa3aea69827/53dd96af93a989e04300c14eb9695c9c.jpg"
@@ -153,7 +153,7 @@ const SearchPage = () => {
                                 "Database",
                             ]}
                             price="250"
-                        />
+                        /> */}
                     </Stack>
                 )}
             </Container>
