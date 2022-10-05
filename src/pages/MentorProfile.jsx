@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     Avatar,
     Box,
@@ -23,11 +23,14 @@ import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import Footer from "../components/Footer";
 import Location from "../components/map/Location";
-import AppbarSpace from "../utils/AppbarSpace";
+import AppbarSpace from "../reusable/AppbarSpace";
 import { useSelector } from "react-redux";
-import { isLoggedIn } from "../redux/slicer/authSlice";
+import { isLoading, isLoggedIn } from "../redux/slicer/authSlice";
 import Header from "../components/Header";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import axios from 'axios';
+import baseUrl from "../utils/baseUrl";
+import { userData } from "../redux/slicer/userSlice";
 
 const Details = ({ icon, label, variant }) => {
     return (
@@ -44,24 +47,47 @@ const Details = ({ icon, label, variant }) => {
     );
 };
 
-const EnrollModal = ({ open, close }) => {
+const EnrollModal = ({ open, close, ref_id, mentor  }) => {
+
+    const handleEnroll = async () => {
+        try {
+            const res = await axios.post(`${baseUrl}/mentee/enroll`, {
+                ref_id
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("fam-id")}`,
+                },
+                withCredentials: true,
+            });
+
+            if( res.data.success ) window.location.reload();
+            
+        } catch (error) {
+            console.log(error.response);
+
+            alert(`Error Message: ${error.response.data.msg}`)
+        } finally {
+            close();
+        }
+    }
 
     return (
         <div>
             <Dialog open={open} >
-                <DialogTitle>
-                    Enroll as Monica's Mentee
+                <DialogTitle sx={{ textTransform: "capitalize" }}>
+                    Enroll to {mentor.firstname} {mentor.lastname}
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        By Enrolling as Monica's Mentee you must agree to terms and agreement.
+                        By Enrolling as <Typography component="span" textTransform="capitalize" color="inherit">{mentor.firstname}'s</Typography> Mentee you must agree to their terms and agreement.
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
                     <Button variant="outlined" color="inherit" autoFocus onClick={close}>
                         Close
                     </Button>
-                    <Button variant="contained" autoFocus onClick={close} >
+                    <Button variant="contained" autoFocus onClick={handleEnroll} >
                         Enroll
                     </Button>
                 </DialogActions>
@@ -72,8 +98,65 @@ const EnrollModal = ({ open, close }) => {
 
 const MentorProfile = () => {
     const userLoggedIn = useSelector(isLoggedIn);
+    const loading = useSelector(isLoading);
+    const user = useSelector(userData);
+
     const navigate = useNavigate();
-    const [ apply, setApply ] = useState(false);
+    const location = useLocation();
+    const ref_id = location.pathname.split("/")[3];
+    const [apply, setApply] = useState(false);
+    const [mentor, setMentor] = useState({});
+
+    const [enrolled, setEnrolled] = useState(false);
+
+    const fetchMentor = async () => {
+        try {
+            const res = await axios.get(`${baseUrl}/mentor/${ref_id}`, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("fam-id")}`,
+                },
+                withCredentials: true,
+            })
+
+            console.log("mentor: ", res.data.mentor);
+            setMentor(res.data.mentor);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+
+        fetchMentor();
+
+        if( userLoggedIn ) {
+            if( !user?.ismentor ) {
+                console.log("asd");
+                checkIfEnrolled();
+            }
+
+        } else {
+            console.log("loggedout");
+        }
+
+
+    }, [loading]);
+
+    
+    const checkIfEnrolled = async () => {
+        console.log("check")
+        try {
+            const mentee = await axios.get(`${baseUrl}/mentee/${user?.ref_id}/mentor/${ref_id}/enrolled`);
+
+            console.log(mentee.data);
+
+            setEnrolled(mentee.data.enrolled);
+            
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
 
     const handleApply = () => {
         if ( !userLoggedIn ) {
@@ -87,13 +170,15 @@ const MentorProfile = () => {
         setApply(false);
     }
 
-    return (
+    console.log("enroll: ",  enrolled)
+
+    return loading ? "loading..." : (
         <React.Fragment>
-            <Header title="Monica Badiu" />
+            <Header title={`${mentor?.firstname} ${mentor?.lastname}`} />
             <AppbarSpace divider />
 
-            <EnrollModal open={apply} close={handleCloseApply} />
-            <Container sx={{ mt: 10 }}>
+            <EnrollModal open={apply} close={handleCloseApply} ref_id={ref_id} mentor={mentor} />
+            <Container sx={{ mt: 8 }}>
                 <Stack
                     direction={{ xs: "column", sm: "column", md: "row" }}
                     gap={{ xs: 5, sm: 5, md: 2 }}
@@ -101,8 +186,8 @@ const MentorProfile = () => {
                 >
                     <Stack direction={{ xs: "column", sm: "row" }} spacing={3}>
                         <Avatar
-                            src="https://cdn.mentorcruise.com/cache/f2dd6a7a12e4f3903dc1c9b9cea331e3/0fc92fa3aea69827/53dd96af93a989e04300c14eb9695c9c.jpg"
-                            alt="Monica Badiu"
+                            src={mentor?.img}
+                            alt={mentor?.firstname}
                             sx={{ width: 170, height: 200, borderRadius: 8 }}
                             variant="rounded"
                         />
@@ -113,20 +198,20 @@ const MentorProfile = () => {
                             gap={5}
                         >
                             <Box>
-                                <Typography variant="h5" fontWeight="bold">
-                                    Monica Badiu
+                                <Typography variant="h4" fontWeight="bold" textTransform="capitalize">
+                                    {mentor?.firstname} {mentor?.lastname}
                                 </Typography>
                                 <Typography variant="inherit" fontWeight={300}>
-                                    Conversion Copywriter & Marketing consultant
+                                    {mentor?.profession}
                                 </Typography>
-                                <Chip
+                                {/* <Chip
                                     icon={<VerifiedIcon />}
                                     label="Verified Mentor"
                                     sx={{ mt: 1 }}
                                     color="success"
                                     size="small"
                                     variant="outlined"
-                                />
+                                /> */}
                             </Box>
 
                             <Stack direction="row" flexWrap="wrap" gap={1}>
@@ -138,18 +223,12 @@ const MentorProfile = () => {
                                         }
                                     />
                                     <Details
-                                        label="0999 798 2135"
+                                        label={mentor?.email}
                                         icon={
-                                            <LocalPhoneOutlinedIcon color="info" />
+                                            <MailOutlineOutlinedIcon color="info" />
                                         }
                                     />
                                 </Stack>
-                                <Details
-                                    label="monicabadiu@gmail.com"
-                                    icon={
-                                        <MailOutlineOutlinedIcon color="info" />
-                                    }
-                                />
                             </Stack>
                         </Stack>
                     </Stack>
@@ -161,8 +240,9 @@ const MentorProfile = () => {
                             fullWidth
                             size="large"
                             onClick={handleApply}
+                            disabled={ !user?.ismentor ? enrolled ? true : false : true }
                         >
-                            { userLoggedIn ? "Enroll as Mentee" : "Login to Apply!" }
+                            { userLoggedIn ? user?.ismentor ? "Cannot enroll as Mentor" : enrolled ? "Enrolled" : "Enroll as Mentee" : "Login to Apply!" }
                         </Button>
 
                         <Typography variant="h6" align="center" mt={1}>
@@ -180,64 +260,20 @@ const MentorProfile = () => {
                 </Stack>
             </Container>
 
+            
+
             <Box bgcolor="#f2f4fb" mt={2} pb={10}>
                 <Container sx={{ pt: 5 }}>
+
                     <Stack
                         direction={{ xs: "column", sm: "column", md: "row" }}
                         gap={5}
                         justifyContent="space-between"
                     >
                         <Box width="100%">
-                            <Section title="Location">
-                                <Box
-                                    style={{ width: "100%", height: 400 }}
-                                    display="flex"
-                                    alignItems="center"
-                                    justifyContent="center"
-                                >
-                                    {userLoggedIn ? (
-                                        <Location />
-                                    ) : (
-                                        <Box>
-                                            <Typography
-                                                variant="inherit"
-                                                fontWeight={300}
-                                                color="error"
-                                            >
-                                                Login Required!
-                                            </Typography>
-                                        </Box>
-                                    )}
-                                </Box>
-                            </Section>
-                        </Box>
-
-                        <Box width="100%">
-                            <Section title="About">
-                                <Typography paragraph fontWeight={300}>
-                                    I help business owners find their growth
-                                    formula so they can have the growth and
-                                    visibility they dream of. I specialize in
-                                    business growth, copywriting, marketing, and
-                                    brand storytelling for entrepreneurs who
-                                    want to take control of their own lives and
-                                    build a legacy that will last long after
-                                    they are gone. I am a mom-in-training with
-                                    an insatiable curiosity for paper art,
-                                    psychology, and all things marketing!
-                                </Typography>
-                            </Section>
-                        </Box>
-
-                        <Box width="100%">
                             <Section title="Skills">
                                 <Stack direction="row" gap={2} flexWrap="wrap">
-                                    {[
-                                        "Email Marketing",
-                                        "Seo for content",
-                                        "Content marketing",
-                                        "Sales copywriting",
-                                    ].map((i, e) => (
+                                    {mentor?.details?.skills.map((i, e) => (
                                         <Chip
                                             key={e}
                                             label={i}
@@ -269,7 +305,58 @@ const MentorProfile = () => {
                                 </Stack>
                             </Section>
                         </Box>
+
+                        <Box width="100%">
+                            <Section title="Location">
+                                <Box
+                                    style={{ width: "100%", height: 400 }}
+                                    display="flex"
+                                    alignItems="center"
+                                    justifyContent="center"
+                                >
+                                    {userLoggedIn ? (
+                                        <Location userCoordinates={user?.coordinates} mentorCoordinates={mentor?.coordinates} />
+                                    ) : (
+                                        <Box>
+                                            <Typography
+                                                variant="inherit"
+                                                fontWeight={300}
+                                                color="error"
+                                            >
+                                                Login Required!
+                                            </Typography>
+                                        </Box>
+                                    )}
+                                </Box>
+                            </Section>
+                        </Box>        
+
                     </Stack>
+                    
+                    <Box width="100%">
+                            <Section title="About">
+                                <Typography 
+                                    paragraph 
+                                    fontWeight={300} 
+                                    sx={{
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        display: '-webkit-box',
+                                        WebkitLineClamp: '20',
+                                        WebkitBoxOrient: 'vertical',
+                                        opacity: 0.9,
+                                        fontWeight: 300,
+                                        mt: 2,
+                                        whiteSpace: "pre-wrap"
+                                    }}
+                                >
+                                    {mentor?.details?.about}
+
+                                </Typography>
+                                {/* <span>Read More...</span> */}
+
+                            </Section>
+                        </Box>       
                 </Container>
             </Box>
             <Footer />
@@ -280,7 +367,7 @@ const MentorProfile = () => {
 const Section = ({ title, children }) => {
     return (
         <Box width="100%" mb={5}>
-            <Typography variant="h6" fontWeight={500} mb={3}>
+            <Typography variant="h5" fontWeight={600} mb={3}>
                 {title}
             </Typography>
             {children}

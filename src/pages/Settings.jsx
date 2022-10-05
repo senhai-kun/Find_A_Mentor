@@ -12,18 +12,28 @@ import {
     Paper,
     InputAdornment,
     Checkbox,
+    MenuItem,
+    Chip,
+    useMediaQuery,
 } from "@mui/material";
 import InsertPhotoOutlinedIcon from "@mui/icons-material/InsertPhotoOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
-import AppbarSpace from "../utils/AppbarSpace";
+import AppbarSpace from "../reusable/AppbarSpace";
 import { useDispatch, useSelector } from "react-redux";
 import {
     loadComponent,
-    uploadImage,
+    setUser,
+    updateProfile,
     userData,
 } from "../redux/slicer/userSlice";
 import LoadingButton from "@mui/lab/LoadingButton";
 import Header from "../components/Header";
+import PlaylistAddRoundedIcon from "@mui/icons-material/PlaylistAddRounded";
+import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
+import axios from 'axios';
+import baseUrl from "../utils/baseUrl";
+import Location from "../components/map/Location";
+import SettingLocation from "../components/map/SettingLocation";
 
 const Input = styled("input")({
     display: "none",
@@ -33,13 +43,28 @@ const Input = styled("input")({
 const Settings = () => {
     const dispatch = useDispatch();
     const user = useSelector(userData);
-    const loading = useSelector(loadComponent);
+    // const loading = useSelector(loadComponent);
+    const [loading, setLoading] = useState(false)
 
-    const [isMentor, setIsMentor] = useState(false);
     const [profileImage, setProfileImage] = useState(null);
+    const [firstname, setFirstname] = useState("");
+    const [lastname, setLastname] = useState("");
+    const [location, setLocation] = useState(() => {
+        if (user?.coordinates) {
+            return user?.coordinates
+        } else {
+            return { lat: 15.487104640287109, lng: 120.9642791748047 }
+        }
+    });
 
     useEffect(() => {
         setProfileImage(user?.img);
+        // if (user.coordinates) {
+        //     setLocation(user.coordinates)
+        // }
+        setFirstname(user?.firstname);
+        setLastname(user?.lastname);
+        
     }, [user]);
 
     const previewImg = (e) => {
@@ -52,11 +77,34 @@ const Settings = () => {
 
         reader.readAsDataURL(e.target.files[0]);
     };
+    console.log(location)
 
-    const uploadImg = () => {
-        if (user.img !== profileImage) {
-            dispatch(uploadImage(profileImage));
+    const uploadImg = async () => {
+        setLoading(true)
+        try {
+            const result = await axios.post(
+                `${baseUrl}/account/update_profile`,
+                { ismentor: user?.ismentor, img: profileImage, firstname, lastname, location, ref_id: user?.ref_id },
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem(
+                            "fam-id"
+                        )}`,
+                    },
+                    withCredentials: true,
+                }
+            );
+
+            dispatch(setUser(result.data.user))
+            console.log(result)
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setLoading(false)
         }
+        // if (user.img !== profileImage) {
+            // dispatch(updateProfile({ img: profileImage, ismentor: user?.ismentor, ref_id: user?.ref_id, firstname, lastname, location}));
+        // }
     };
 
     return (
@@ -83,7 +131,7 @@ const Settings = () => {
                             p: { xs: 2, sm: 3, md: 5 },
                             border: "2px solid #dadce3",
                             borderRadius: (theme) => theme.shape.borderRadius,
-                            bgcolor: "inherit",
+                            // bgcolor: "inherit",
                         }}
                         elevation={0}
                     >
@@ -94,7 +142,8 @@ const Settings = () => {
                                         First name
                                     </Typography>
                                     <TextField
-                                        value={user?.firstname}
+                                        value={firstname}
+                                        onChange={(e) => setFirstname(e.target.value)}
                                         fullWidth
                                         size="small"
                                     />
@@ -104,7 +153,8 @@ const Settings = () => {
                                         Last name
                                     </Typography>
                                     <TextField
-                                        value={user?.lastname}
+                                        value={lastname}
+                                        onChange={(e) => setLastname(e.target.value)}
                                         fullWidth
                                         size="small"
                                     />
@@ -117,6 +167,7 @@ const Settings = () => {
                                     value={user?.email}
                                     fullWidth
                                     size="small"
+                                    disabled
                                     InputProps={{
                                         startAdornment: (
                                             <InputAdornment position="start">
@@ -128,30 +179,15 @@ const Settings = () => {
                             </Box>
                         </Box>
 
-                        <Stack
-                            direction={{ xs: "column", sm: "row" }}
-                            mt={2}
-                            gap={2}
-                            alignItems="center"
-                        >
-                            <Box width="100%">
-                                <Typography fontWeight={300}>
-                                    Birthdate
-                                </Typography>
-                                <TextField
-                                    type="date"
-                                    size="small"
-                                    defaultValue="2000-10-23"
-                                />
-                            </Box>
-                        </Stack>
-
                         <ProfileImage
+                            userAlt={user?.firstname}
                             profileImage={profileImage}
                             previewImg={previewImg}
                         />
 
-                        <Divider />
+                        <LocationSettings location={location} setLocation={setLocation} />
+
+                        <Divider sx={{ pb: 3 }} />
 
                         <Stack direction="row" pt={2} pb={3} gap={2}>
                             <LoadingButton
@@ -163,18 +199,214 @@ const Settings = () => {
                                 {loading ? "loading" : "Save"}
                             </LoadingButton>
 
-                            <Button fullWidth variant="outlined" color="error">
-                                Cancel
-                            </Button>
+
                         </Stack>
+
+                        <Box>
+
+                        </Box>
                     </Paper>
+
+                    { user?.ismentor && <MentorSettings user={user} /> }
+
                 </Container>
             </Box>
         </React.Fragment>
     );
 };
 
-const ProfileImage = ({ profileImage, previewImg }) => {
+const LocationSettings = ({ location, setLocation }) => {
+
+    return (
+        <React.Fragment>
+            <Typography variant="h6" fontWeight={300}>
+                Location
+            </Typography>
+
+            <SettingLocation location={location} setLocation={setLocation} />
+
+        </React.Fragment>
+    )
+}
+
+const MentorSettings = ({ user }) => {
+
+    const mobile = useMediaQuery( theme => theme.breakpoints.down("sm") );
+
+    const [profession, setProfession] = useState(user.profession);
+    const [skill, setSkill] = useState(user.details.skills);
+    const [addSkill, setAddSkill] = useState("");
+    const [about, setAbout] = useState(user.details.about);
+
+    const [loading, setLoading] = useState(false);
+
+    const handleChange = e => {
+        setAbout(e.target.value)
+    }
+
+    const handleDeleteSkill = (indexToDelete) => {
+        setSkill( currentList => currentList.filter( (_, index) => indexToDelete !== index ) )
+    }
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if( about < 100 || skill.length < 3 ) {
+            console.log("don't submit")
+        } else {
+            console.log("submit form", skill.length);
+
+            try {
+                const user = await axios.post(`${baseUrl}/account/update_mentor`, 
+                    { profession, skills: skill, about },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem(
+                                "fam-id"
+                            )}`,
+                        },
+                        withCredentials: true,
+                    }
+                )
+
+                console.log(user)
+
+            } catch (error) {
+                console.log(error.response)
+            }
+
+        }
+    }
+
+    return (
+        <React.Fragment>
+            <Typography variant="h4" fontWeight="bold">
+                Mentor Details
+            </Typography>
+            <Typography
+                variant="body2"
+                fontWeight={300}
+                sx={{ opacity: 0.6, mt: 1, mb: 2 }}
+            >
+                Edit your mentor profile.
+            </Typography>
+
+            <Paper
+                sx={{
+                    m: { xs: 0, sm: 2, md: 5 },
+                    p: { xs: 2, sm: 3, md: 5 },
+                    border: "2px solid #dadce3",
+                    borderRadius: (theme) => theme.shape.borderRadius,
+                    // bgcolor: "inherit",
+                }}
+                elevation={0}
+                component="form"
+                onSubmit={handleSubmit}
+            >   
+                <Typography variant="h5" fontWeight={500}>Profession</Typography>
+                <TextField
+                    size="small"
+                    select
+                    sx={{ pt: 1 }}
+                    value={profession}
+                    onChange={(e) => setProfession(e.target.value)}
+                    fullWidth
+                    required
+                >
+                    <MenuItem disabled divider value="placeholder">
+                        Please select your profession
+                    </MenuItem>
+                    <MenuItem value="Engineering">Engineering</MenuItem>
+                    <MenuItem value="Information Technology">
+                        Information Technology
+                    </MenuItem>
+                    <MenuItem value="Business & Management">
+                        Business & Management
+                    </MenuItem>
+                    <MenuItem value="Product & Marketing">
+                        Product & Marketing
+                    </MenuItem>
+                </TextField>
+                
+                <Box sx={{ pt: 4 }}>
+                    <Typography variant="h5" fontWeight={500} >
+                        Skills
+                    </Typography>
+                    
+                    <Stack direction="row" gap={1} flexWrap="wrap" pt={1}>
+                        {skill.map((skill, index) => (
+                            <Chip
+                                key={index}
+                                value={skill}
+                                label={skill}
+                                variant="contained"
+                                color="info"
+                                sx={{ fontSize: 18 }}
+                                deleteIcon={<HighlightOffRoundedIcon />}
+                                onDelete={() => handleDeleteSkill(index)}
+                            />
+                        ))}
+                    </Stack>
+
+                    <Stack direction="row" gap={1} pt={2}>
+                        <TextField
+                            size="small"
+                            value={addSkill}
+                            onChange={(e) => setAddSkill(e.target.value)}
+                        />
+                        <Button
+                            onClick={() => {
+                                setSkill((currentList) => [
+                                    ...currentList,
+                                    addSkill,
+                                ]);
+                                setAddSkill("");
+                            }}
+                            variant="contained"
+                            color="info"
+                            startIcon={<PlaylistAddRoundedIcon />}
+                        >
+                            Add
+                        </Button>
+                    </Stack>
+                </Box>
+
+                <Box sx={{ pt: 4 }}>
+                    <Typography variant="h5" fontWeight={500} >
+                        About
+                    </Typography>
+
+                    <TextField 
+                        multiline
+                        minRows={ mobile ? 4 : 8 }
+                        fullWidth
+                        value={about}
+                        onChange={handleChange}
+                        color="info"
+                        placeholder="Write about yourself in less than 100words to impress your mentees..."
+                        required
+                        sx={{ pt: 2, whiteSpace: "pre-wrap" }}
+                    />
+                </Box>
+                
+
+                <Box textAlign="right" pt={2} pb={3} >
+                    <LoadingButton
+                        fullWidth
+                        variant="contained"
+                        loading={loading}
+                        type="submit"
+                        sx={{ width: "50%" }}
+                    >
+                        {loading ? "loading" : "Update"}
+                    </LoadingButton>
+                </Box>
+            </Paper>
+        </React.Fragment>
+    )
+}
+
+const ProfileImage = ({ userAlt, profileImage, previewImg }) => {
     return (
         <React.Fragment>
             <Stack
@@ -186,7 +418,7 @@ const ProfileImage = ({ profileImage, previewImg }) => {
             >
                 <Avatar
                     src={profileImage}
-                    alt="asd"
+                    alt={userAlt}
                     sx={{ height: 150, width: 150 }}
                     // variant="rounded"
                 />

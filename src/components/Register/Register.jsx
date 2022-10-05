@@ -41,8 +41,8 @@ const outlineColor = "#c45a04"
 const validationSchema = yup.object({
     firstname: yup
         .string("Enter a valid name")
-        .min(1, "Name must be ")
-        .max(15, "Must be 15 characters or less")
+        .min(2, "Name must be ")
+        .max(20, "Must be 20 characters or less")
         .required("Firstname must not be empty")
         .matches(/^[^\s].+[a-zA-Z]+[a-zA-Z]+$/, "This name is not valid."),
     lastname: yup
@@ -140,12 +140,13 @@ const Register = () => {
                                 withCredentials: true,
                             }
                         );
-                        
+
+                        console.log("login from register: ", fetch.data)
                         dispatch(registerUser({ navigate, data: fetch.data }));
                         
                     } catch (err) {
                         // dispatch(login(e.response.data.success));
-                        // console.log(err.response);
+                        console.log(err.response.data);
                         setErrorMsg(err.response.data.email);
                         setError(true)
                         setFieldError(err.response.data.param, err.response.data.errorMsg);
@@ -158,7 +159,7 @@ const Register = () => {
 
                 { (formik) => (
                     <Box
-                        component="form"
+                        component="form"s
                         onSubmit={formik.handleSubmit}
                         width={{ xs: "80%", sm: "70%", md: "80%", lg: "70%" }}
                         m="auto"
@@ -190,7 +191,7 @@ const Register = () => {
                             mt={2}
                             mb={3}
                         >
-                            <Stack direction={{ xs: "column", sm: "row" }} spacing={3}>
+                            <Stack direction={{ xs: "column", md: "row" }} spacing={2} >
                                 <Input
                                     placeholder="First Name"
                                     name="firstname"

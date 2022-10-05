@@ -96,6 +96,7 @@ const revalidateSession = createAsyncThunk(
             });
             // get user data
             // dispatch(login(ses.data));
+            console.log(ses.data)
             dispatch(setUser(ses.data.user));
 
             return ses.data.success;
@@ -135,6 +136,7 @@ export const logoutUser = (navigate) => async (dispatch) => {
     try {
         const res = await axios.get(`${baseUrl}/account/logout`);
         
+        console.log("try: ",res.data)
         if ( res.data.logout ) {
             localStorage.removeItem("fam-id");
             dispatch(clearUser());
@@ -144,6 +146,7 @@ export const logoutUser = (navigate) => async (dispatch) => {
         }
     } catch (e) {
         navigate("/");
+        console.log("Logout catch")
         console.log("Error", e);
     }
 };

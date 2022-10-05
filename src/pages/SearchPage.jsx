@@ -12,21 +12,40 @@ import SearchCard from "../components/search/SearchCard";
 import Footer from "../components/Footer";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import PageLoader from "../components/search/PageLoader";
-import AppbarSpace from "../utils/AppbarSpace";
+import AppbarSpace from "../reusable/AppbarSpace";
 import Header from "../components/Header";
+import axios from 'axios';
+import baseUrl from "../utils/baseUrl";
 
 const SearchPage = () => {
     const [data, setData] = useState(false);
+    const [mentors, setMentors] = useState([])
 
-    useEffect(() => {
-        const fake = setTimeout(() => {
-            setData(true);
-        }, 2000);
+    // useEffect(() => {
+    //     const fake = setTimeout(() => {
+    //         setData(true);
+    //     }, 2000);
 
-        return () => {
-            clearTimeout(fake);
-        };
-    }, []);
+    //     return () => {
+    //         clearTimeout(fake);
+    //     };
+    // }, []);
+
+    useEffect( () => {
+        const fetchAllMentors = async () => {
+            try {
+            
+                const res = await axios.get(`${baseUrl}/mentors`);
+    
+                console.log(res.data.mentors)
+                setMentors(res.data.mentors);
+                setData(true)
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        fetchAllMentors();
+    }, [])
 
     return (
         <React.Fragment>
@@ -43,11 +62,24 @@ const SearchPage = () => {
                     <PageLoader />
                 ) : (
                     <Stack mt={5} spacing={4} pb={5}>
+                        {mentors.map( (user, index) => (
+                            <React.Fragment key={index}>
+                                <SearchCard 
+                                    fullname={`${user?.firstname} ${user?.lastname}`}
+                                    img={user?.img}
+                                    profession={user?.profession}
+                                    rating={user.details.ratings}
+                                    about={user.details.about}
+                                    skills={user.details.skills}
+                                    ref_id={user.ref_id}
+                                />
+                            </React.Fragment>
+                        ))}
                         <SearchCard
                             fullname="Monica Badiu"
                             isVerified
                             img="https://cdn.mentorcruise.com/cache/f2dd6a7a12e4f3903dc1c9b9cea331e3/0fc92fa3aea69827/53dd96af93a989e04300c14eb9695c9c.jpg"
-                            course="Conversion Copywriter & Marketing consultant"
+                            profession="Conversion Copywriter & Marketing consultant"
                             rating={4}
                             about="I help business owners find their growth formula so they can have the growth and visibility they dream of. I specialize in business growth, copywriting, marketing, and brand storytelling for entrepreneurs who want to take control of their own lives and build a legacy that will last long after they are gone. I am a mom-in-training with an insatiable curiosity for paper art, psychology, and all things marketing!"
                             skills={[
@@ -56,14 +88,14 @@ const SearchPage = () => {
                                 "Content marketing",
                                 "Sales copywriting",
                             ]}
-                            price="250"
+                            // price="250"
                             bookmark
                         />
 
                         <SearchCard
                             fullname="Ambroise Dhenain"
                             img="https://cdn.mentorcruise.com/cache/b8c395cef923eea45facac69ed777ef4/1a24793c31255947/c53ff680535847043f06e17a573947d2.jpg"
-                            course="CTO"
+                            profession="CTO"
                             rating={5}
                             about={
                                 <span>
@@ -141,7 +173,7 @@ const Filter = () => {
                 <Stack direction="row" spacing={1}>
                     <TextField
                         type="text"
-                        placeholder="Search for a course, name, place"
+                        placeholder="Search for a profession, name, place"
                         InputProps={{
                             sx: { borderRadius: 50 },
                         }}

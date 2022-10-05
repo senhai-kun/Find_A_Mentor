@@ -55,8 +55,11 @@ const style = makeStyles((theme) => ({
 const Header = () => {
     const navigate = useNavigate();
     const location = useLocation();
+
     const { loggedIn } = useSelector(auth);
+    const user = useSelector(userData);
     const dispatch = useDispatch();
+
     const classes = style();
     const [isOpen, setOpen] = useState(false);
 
@@ -84,7 +87,7 @@ const Header = () => {
     };
 
     const navigateProfile = () => {
-        navigate("/account/profile/monicabaidu");
+        navigate(`/account/profile/${user?.ref_id}`);
         setOpen(false);
     };
 
@@ -169,7 +172,7 @@ const Header = () => {
                                             Find a Mentor
                                         </Button>
 
-                                        <UserMenu />
+                                        <UserMenu user={user} />
                                     </React.Fragment>
                                 )}
                             </Stack>
@@ -255,9 +258,8 @@ const Header = () => {
     );
 };
 
-const UserMenu = () => {
+const UserMenu = ({ user }) => {
     const navigate = useNavigate();
-    const user = useSelector(userData);
     const dispatch = useDispatch();
 
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -272,7 +274,7 @@ const UserMenu = () => {
 
     const goToProfile = () => {
         handleClose();
-        navigate("/account/profile/monicabaidu");
+        navigate(`/account/profile/${user?.ref_id}`);
     };
 
     const goToSettings = () => {
@@ -297,11 +299,10 @@ const UserMenu = () => {
                 onClick={handleClick}
             >
                 <Avatar
-                    // src="https://cdn.mentorcruise.com/cache/f2dd6a7a12e4f3903dc1c9b9cea331e3/0fc92fa3aea69827/53dd96af93a989e04300c14eb9695c9c.jpg"
                     src={user?.img}
-                    alt="Monica Badiu"
+                    alt={user?.firstname}
                 />
-                <Typography fontWeight={500}>{user?.firstname}</Typography>
+                <Typography fontWeight={500} textTransform="capitalize">{user?.firstname}</Typography>
             </IconButton>
             <Menu
                 open={open}

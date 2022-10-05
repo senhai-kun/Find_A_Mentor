@@ -17,18 +17,18 @@ const Pages = () => {
     return (
         <React.Fragment>
             {pathname !== "/account/login" &&
-                pathname !== "/account/register" && <Header />}
+                pathname !== "/account/register" && pathname !== "/getting_started" && <Header />}
 
             <Routes>
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/search" element={<SearchPage />} />
                 <Route
-                    path="/mentor/profile/:name"
+                    path="/mentor/profile/:ref_id/:name"
                     element={<MentorProfile />}
                 />
                 <Route path="/getting_started" element={<GettingStarted />} />
                 <Route
-                    path="/account/profile/:name"
+                    path="/account/profile/:ref_id"
                     element={
                         <RequireAuth>
                             <UserProfile />

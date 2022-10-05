@@ -10,10 +10,11 @@ import {
     Typography,
     useMediaQuery,
 } from "@mui/material";
-import AppbarSpace from "../utils/AppbarSpace";
 import PlaylistAddRoundedIcon from "@mui/icons-material/PlaylistAddRounded";
 import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
-
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import baseUrl from "../utils/baseUrl";
 /*
     notes: 
         counting words (done)
@@ -23,8 +24,9 @@ import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
 const GettingStarted = () => {
 
     const mobile = useMediaQuery( theme => theme.breakpoints.down("sm") );
+    const navigate = useNavigate();
 
-    const [category, setCategory] = useState("placeholder");
+    const [profession, setProfession] = useState("placeholder");
     // const [customCategory, setCustomCategory] = useState("");
 
     const [skill, setSkill] = useState([]);
@@ -44,42 +46,61 @@ const GettingStarted = () => {
 
     }
 
-    const handleSubmit = e => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if( category === "placeholder" || count < 100 || skill.length < 3) {
+        if( profession === "placeholder" || count < 100 || skill.length < 3) {
             console.log("don't submit")
         } else {
             console.log("submit form", skill.length);
+
+            try {
+                const user = await axios.post(`${baseUrl}/account/update_mentor`, 
+                    { profession, skills: skill, about },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem(
+                                "fam-id"
+                            )}`,
+                        },
+                        withCredentials: true,
+                    }
+                )
+
+                console.log(user)
+                navigate("/account/settings");
+
+            } catch (error) {
+                console.log(error.response)
+            }
+
         }
         
     }
 
     return (
         <React.Fragment>
-            <AppbarSpace divider />
-
             <Container sx={{ p: 2 }} component="form" onSubmit={handleSubmit}>
                 <Typography variant="h3" fontWeight="bold" pt={4}>
                     Getting Started
                 </Typography>
 
                 <Box pt={5}>
-                    <Typography variant="h4" >
-                        What is your Field Expertise?
+                    <Typography variant="h5" >
+                        What is your Field Expertise/Profession?
                     </Typography>
 
                     <TextField
                         size="small"
                         select
                         sx={{ pt: 3 }}
-                        value={category}
-                        onChange={(e) => setCategory(e.target.value)}
+                        value={profession}
+                        onChange={(e) => setProfession(e.target.value)}
                         fullWidth
                         required
                     >
                         <MenuItem disabled divider value="placeholder">
-                            Please select your category
+                            Please select your profession
                         </MenuItem>
                         <MenuItem value="Engineering">Engineering</MenuItem>
                         <MenuItem value="Information Technology">
@@ -101,7 +122,7 @@ const GettingStarted = () => {
                                     onChange={ e => setCustomCategory(e.target.value)}
                                 />
 
-                                <Button variant="contained" color="info" onClick={ () => setCategory(customCategory) } >
+                                <Button variant="contained" color="info" onClick={ () => setProfession(customCategory) } >
                                     Add
                                 </Button>
                             </Stack> */}
@@ -110,7 +131,7 @@ const GettingStarted = () => {
                 </Box>
 
                 <Box pt={5}>
-                    <Typography variant="h4" >
+                    <Typography variant="h5" >
                         What are your Skills?
                     </Typography>
                     <Typography sx={{ opacity: 0.6 }} >You can give as many as you can with minimum of 3.</Typography>
@@ -153,7 +174,7 @@ const GettingStarted = () => {
                 </Box>
 
                 <Box pt={5}>
-                    <Typography variant="h3">Tell us About Yourself </Typography>
+                    <Typography variant="h4">Tell us About Yourself </Typography>
                     
                     <Typography align="right" pt={3}>{count} words to count</Typography>
 
@@ -166,6 +187,7 @@ const GettingStarted = () => {
                         color="info"
                         placeholder="Write about yourself in less than 100words to impress your mentees..."
                         required
+                        sx={{ whiteSpace: "pre-wrap" }}
                     />
 
                 </Box>

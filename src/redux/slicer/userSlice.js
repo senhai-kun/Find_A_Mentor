@@ -7,13 +7,14 @@ const initialState = {
     componentLoading: false,
 };
 
-export const uploadImage = createAsyncThunk(
+export const updateProfile = createAsyncThunk(
     "auth/account/uploadimage",
-    async (data, { dispatch }) => {
+    async ({ ismentor, img, firstname, lastname, location, ref_id }, { dispatch }) => {
         try {
+            console.log(ismentor, img, firstname, lastname, location, ref_id)
             const result = await axios.post(
-                `${baseUrl}/account/uploadimage`,
-                { img: data },
+                `${baseUrl}/account/update_profile`,
+                { ismentor, img, firstname, lastname, location, ref_id },
                 {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem(
@@ -40,19 +41,21 @@ export const userSlice = createSlice({
     reducers: {
         setUser: (state, { payload }) => {
             state.user = payload;
+            console.log(state.user)
+
         },
         clearUser: (state) => {
             state.user = null;
         },
     },
     extraReducers: ({ addCase }) => {
-        addCase(uploadImage.pending, (state) => {
+        addCase(updateProfile.pending, (state) => {
             state.componentLoading = true;
         });
-        addCase(uploadImage.fulfilled, (state) => {
+        addCase(updateProfile.fulfilled, (state) => {
             state.componentLoading = false;
         });
-        addCase(uploadImage.rejected, (state) => {
+        addCase(updateProfile.rejected, (state) => {
             state.componentLoading = false;
         });
     },

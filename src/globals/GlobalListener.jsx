@@ -35,7 +35,7 @@ const GlobalListener = () => {
         window.addEventListener("storage", listener);
 
         return () => window.removeEventListener("storage", listener);
-    }, [dispatch, navigate, location]);
+    }, [dispatch, navigate]);
 
     return null;
 };
