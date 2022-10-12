@@ -284,7 +284,7 @@ const MentorProfile = () => {
                                 </Stack>
                             </Section>
 
-                            <Section title="Social Links">
+                            {/* <Section title="Social Links">
                                 <Stack direction="column" gap={1}>
                                     <Details
                                         icon={<FacebookIcon color="info" />}
@@ -303,7 +303,7 @@ const MentorProfile = () => {
                                         label="monica_badiu"
                                     />
                                 </Stack>
-                            </Section>
+                            </Section> */}
                         </Box>
 
                         <Box width="100%">

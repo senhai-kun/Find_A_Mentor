@@ -96,7 +96,7 @@ const revalidateSession = createAsyncThunk(
             });
             // get user data
             // dispatch(login(ses.data));
-            console.log(ses.data)
+            console.log("ses: ",ses.data)
             dispatch(setUser(ses.data.user));
 
             return ses.data.success;

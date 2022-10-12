@@ -62,7 +62,7 @@ const Intro = () => {
                             fontWeight="bold"
                             align="center"
                         >
-                            Find Your{" "}
+                            Find A{" "}
                             <Box component="span" color="#0277bd">
                                 Mentor
                             </Box>

@@ -229,7 +229,7 @@ const Header = () => {
                                     color="inherit"
                                     onClick={navigateProfile}
                                 >
-                                    Profile
+                                    Dashboard
                                 </Button>
 
                                 <Button
@@ -322,7 +322,7 @@ const UserMenu = ({ user }) => {
                         <AccountCircleRoundedIcon color="primary" />
                     </ListItemIcon>
                     <ListItemText>
-                        <Typography>Account</Typography>
+                        <Typography>Dashboard</Typography>
                     </ListItemText>
                 </MenuItem>
 

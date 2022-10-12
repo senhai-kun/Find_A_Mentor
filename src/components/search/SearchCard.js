@@ -73,10 +73,10 @@ const SearchCard = ({ fullname, img, profession, rating, isVerified, bookmark, a
                         <Stack direction={{ xs: 'column', sm: 'column', md: 'row' }} alignItems='center' mb={2} spacing={1} >
                             <Button onClick={ () => navigate(`/mentor/profile/${ref_id}/${fullname.replace(" ", "_")}`)} variant='contained' color='primary' size='large' sx={{ width: { xs: '100%', sm: '90%', md: '30%' } }} >Enroll Now!</Button>
                         
-                            <Typography variant='h6' >
+                            {/* <Typography variant='h6' >
                                 Only
                                 <Typography variant='h6' fontWeight='bold' component='span' > ₱{price} /month</Typography> 
-                            </Typography>
+                            </Typography> */}
                         </Stack>
                     </Box>
                 </Stack>

@@ -4,7 +4,7 @@ import FindInPageRoundedIcon from '@mui/icons-material/FindInPageRounded';
 
 const Footer = () => {
     return (
-        <Box sx={{ backgroundColor: '#160957' }} >
+        <Box sx={{ backgroundColor: '#0c0147', pb: 8 }} >
             <Box textAlign='left' color='white' bgcolor="#0c0147" p={1} pb={10} position="relative" >
                 <Container >
                     <Stack direction='row' spacing={0.5} alignItems='center' >

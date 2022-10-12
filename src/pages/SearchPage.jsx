@@ -19,26 +19,18 @@ import baseUrl from "../utils/baseUrl";
 
 const SearchPage = () => {
     const [data, setData] = useState(false);
-    const [mentors, setMentors] = useState([])
-
-    // useEffect(() => {
-    //     const fake = setTimeout(() => {
-    //         setData(true);
-    //     }, 2000);
-
-    //     return () => {
-    //         clearTimeout(fake);
-    //     };
-    // }, []);
+    const [mentors, setMentors] = useState([]);
+    const [filtered, setFiltered] = useState([]);
+    const [onFilter, setOnFilter] = useState(false);
 
     useEffect( () => {
         const fetchAllMentors = async () => {
             try {
-            
                 const res = await axios.get(`${baseUrl}/mentors`);
     
                 console.log(res.data.mentors)
                 setMentors(res.data.mentors);
+                setFiltered(res.data.mentors);
                 setData(true)
             } catch (error) {
                 console.log(error)
@@ -54,7 +46,7 @@ const SearchPage = () => {
             <AppbarSpace divider />
 
             <Container sx={{ mt: 8 }}>
-                <Filter />
+                <Filter mentors={mentors} setMentors={setMentors} filtered={filtered} setFiltered={setFiltered} setOnFilter={setOnFilter} />
 
                 <Divider />
 
@@ -62,19 +54,32 @@ const SearchPage = () => {
                     <PageLoader />
                 ) : (
                     <Stack mt={5} spacing={4} pb={5}>
-                        {mentors.map( (user, index) => (
+                        {onFilter ? filtered.map( (user, index) => (
+                            <React.Fragment key={index}>
+                            <SearchCard 
+                                    fullname={`${user?.firstname} ${user?.lastname}`}
+                                    img={user?.img}
+                                    profession={user?.profession}
+                                    rating={user?.details?.rating?.rate}
+                                    about={user?.details?.about}
+                                    skills={user?.details?.skills}
+                                    ref_id={user?.ref_id}
+                                />
+                            </React.Fragment>
+                        )) : mentors.map( (user, index) => (
                             <React.Fragment key={index}>
                                 <SearchCard 
                                     fullname={`${user?.firstname} ${user?.lastname}`}
                                     img={user?.img}
                                     profession={user?.profession}
-                                    rating={user.details.ratings}
+                                    rating={user.details.rating.rate}
                                     about={user.details.about}
                                     skills={user.details.skills}
                                     ref_id={user.ref_id}
                                 />
                             </React.Fragment>
-                        ))}
+                        ))
+                        }
                         {/* <SearchCard
                             fullname="Monica Badiu"
                             isVerified
@@ -163,9 +168,15 @@ const SearchPage = () => {
     );
 };
 
-const Filter = () => {
-    const [lookingFor, setLookingFor] = useState("Mentor");
+const Filter = ({ mentors, setMentors, filtered, setFiltered, setOnFilter }) => {
     const [category, setCategory] = useState("All");
+
+    useEffect( () => {
+        if(category !== "All") {
+            // let filter = mentors
+            setFiltered(mentors.filter( i => i.profession === category ));
+        }
+    }, [category])
 
     return (
         <React.Fragment>
@@ -173,7 +184,7 @@ const Filter = () => {
                 <Stack direction="row" spacing={1}>
                     <TextField
                         type="text"
-                        placeholder="Search for a profession, name, place"
+                        placeholder="Search for a profession or name..."
                         InputProps={{
                             sx: { borderRadius: 50 },
                         }}
@@ -197,7 +208,14 @@ const Filter = () => {
                             sx: { borderRadius: 10, fontWeight: 300 },
                         }}
                         value={category}
-                        onChange={(e) => setCategory(e.target.value)}
+                        onChange={(e) => {
+                            setCategory(e.target.value);
+                            if( e.target.value !== "All" ) {
+                                setOnFilter(true);
+                            } else {
+                                setOnFilter(false);
+                            }
+                        }}
                     >
                         <MenuItem autoFocus={false} divider value="All">
                             All Category
@@ -214,20 +232,6 @@ const Filter = () => {
                         <MenuItem dense value="Product & Marketing">
                             Product & Marketing
                         </MenuItem>
-                    </TextField>
-
-                    <TextField
-                        size="small"
-                        sx={{ alignSelf: "end" }}
-                        select
-                        SelectProps={{
-                            sx: { borderRadius: 10, fontWeight: 300 },
-                        }}
-                        value={lookingFor}
-                        onChange={(e) => setLookingFor(e.target.value)}
-                    >
-                        <MenuItem value="Mentor">Mentor</MenuItem>
-                        <MenuItem value="Mentee">Mentee</MenuItem>
                     </TextField>
                 </Stack>
             </Box>
