@@ -10,6 +10,8 @@ import Settings from "./Settings";
 import GettingStarted from "./GettingStarted";
 import RequireAuth from "../auth/RequireAuth";
 import Protected from "../auth/Protected";
+import NotFound from "./NotFound";
+import Chat from "./Chat";
 
 const Pages = () => {
     const { pathname } = useLocation();
@@ -45,6 +47,7 @@ const Pages = () => {
                 />
                 <Route path="/account/login" element={<LoginContainer />} />
                 <Route path="/account/register" element={<LoginContainer />} />
+                <Route path="/chat/:user" element={<Chat />} />
 
                 <Route path="*" element={<NotFound />} />
             </Routes>
@@ -52,12 +55,6 @@ const Pages = () => {
     );
 };
 
-const NotFound = () => {
-    return (
-        <div>
-            <h1 style={{ marginTop: "20%" }}>Content not found</h1>
-        </div>
-    );
-};
+
 
 export default Pages;

@@ -21,6 +21,8 @@ import {
     DialogContent,
     Rating,
     DialogActions,
+    Snackbar,
+    Alert,
 } from "@mui/material";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import LocalPhoneOutlinedIcon from "@mui/icons-material/LocalPhoneOutlined";
@@ -40,6 +42,9 @@ import moment from "moment";
 import DoneOutlineRoundedIcon from '@mui/icons-material/DoneOutlineRounded';
 import LoadingButton from '@mui/lab/LoadingButton';
 import DoneAllRoundedIcon from '@mui/icons-material/DoneAllRounded';
+import ChatIcon from '@mui/icons-material/Chat';
+import { useNavigate } from "react-router-dom";
+import SendRoundedIcon from '@mui/icons-material/SendRounded';
 
 const Details = ({ icon, label, variant, size }) => {
     return (
@@ -56,6 +61,7 @@ const Details = ({ icon, label, variant, size }) => {
 
 const UserProfile = () => {
     const user = useSelector(userData);
+    const navigate = useNavigate();
     const [date, setDate] = useState(null);
     const [mentor, setMentor] = useState([])
     const [menteeList, setMenteeList] = useState([]);
@@ -91,10 +97,7 @@ const UserProfile = () => {
                     setMentor(user_profile.data.mentee);
                     setAppointments(user_profile.data.mentee.map( i => ({ ...i, mentee: i.mentee.filter( data => data._id.ref_id === user.ref_id ) }) ));
                     setMenteeSched(user_profile.data.mentee.map( i => ({ ...i, mentee: i.mentee.filter( data => data._id.ref_id === user.ref_id ).map( a => ({ ...a, schedule: a.schedule.filter( sched => sched._id.approved === false ) })) }) ));
-
                 }
-                
-
             } catch (error) {
                 console.log(error)
             }
@@ -145,6 +148,7 @@ const UserProfile = () => {
                     direction={{ xs: "column", sm: "column", md: "row" }}
                     gap={{ xs: 5, sm: 5, md: 2 }}
                     justifyContent="space-between"
+                    alignItems={{ sm: "start", md: "center" }}
                 >
                     <Stack direction={{ xs: "column", sm: "row" }} spacing={3}>
                         <Avatar
@@ -176,6 +180,12 @@ const UserProfile = () => {
                             </Box>
                         </Stack>
                     </Stack>
+
+                    {/* <Box>
+                        <IconButton onClick={ () => navigate(`/chat/${user?.ref_id}`)} size="large" >
+                            <ChatIcon color="primary" fontSize="large" />
+                        </IconButton>
+                    </Box> */}
                 </Stack>
             </Container>
 
@@ -196,8 +206,7 @@ const UserProfile = () => {
                             <Stack direction="column" gap={2}>
 
                                 {user?.ismentor ? <MentorAppointment appointment={appointments} /> : <MenteeAppointment appointment={appointments} user={user} /> }
-                    
-                                
+            
                             </Stack>
                         </Section>
                         
@@ -205,8 +214,26 @@ const UserProfile = () => {
                         
                         
                     </Stack>
+
+                    <Divider sx={{ mt: 8, mb: 8 }} variant="middle" />
+
+                    <Stack
+                        direction={{ xs: "column", sm: "row" }}
+                        gap={5}
+                        divider={
+                            <Divider
+                                orientation="vertical"
+                                flexItem
+                                variant="middle"
+                            />
+                        }
+                    >
+
+                        { user?.ismentor ? <MenteeList mentee={menteeList} /> : <MentorList mentor={mentor} />}
+                        
+                        {user?.ismentor && <SendEmail user={user} menteeList={menteeList} />}
+                    </Stack>
                     
-                    { user?.ismentor ? <MenteeList mentee={menteeList} /> : <MentorList mentor={mentor} />}
                 </Container>
             </Box>
 
@@ -214,6 +241,109 @@ const UserProfile = () => {
         </React.Fragment>
     );
 };
+const SendEmail = ({ user, menteeList }) => {
+    const [sendTo, setSendTo] = useState([]);
+    const [msg, setMsg] = useState("");
+    const [sending, setSending] = useState(false);
+    const [openSnack, setOpenSnack] = useState(false);
+    const [alertMsg, setAlertMsg] = useState("")
+
+    const handleChange = e => {
+        setSendTo(
+            typeof e.target.value === "string" ? e.target.value.split(",") : e.target.value
+        )
+    }
+
+    const handleSendEmail = async () => {
+        setSending(true);
+
+        try {
+            // from, to, mentor
+            const res = await axios.post(`${baseUrl}/email`, {
+                from: user?.email,
+                to: sendTo,
+                mentor: `${user?.firstname} ${user?.lastname}`,
+                text: msg
+            })
+
+            console.log(res.data);
+            setAlertMsg(res.data.msg);
+            setOpenSnack(true)
+        } catch (error) {
+            console.error(error);
+            setAlertMsg(error.response.data.msg);
+        } finally {
+            setSending(false);
+        }
+    }
+
+    return (
+        <React.Fragment>
+            <Section title="Compose an Email" subtitle="Mentee Email" >
+                <Select  
+                    value={sendTo}
+                    size="small"
+                    displayEmpty
+                    multiple
+                    renderValue={(selected) => {
+                        if (selected.length === 0) {
+                          return <em>Select an email you wish to send</em>;
+                        }
+                        return (
+                            <Stack display="column" gap={1} >
+                                { selected.map( value => (
+                                    <Chip key={value} label={value} color="primary" sx={{ fontSize: 15 }} />
+                                )) }
+                            </Stack>
+                        );
+                    }}
+                    onChange={handleChange}
+                    sx={{ mb: 3 }} 
+                >
+                    {menteeList?.map( (i, index) => (
+                        <MenuItem key={index} value={i?._id?.email} >{i?._id?.email}</MenuItem>
+                    ))}
+                </Select>
+
+                <Box>
+                    <TextField 
+                        fullWidth
+                        multiline
+                        minRows={4}
+                        sx={{ whiteSpace: "pre-wrap" }}
+                        value={msg}
+                        onChange={ e => setMsg(e.target.value)}
+                        placeholder="Compose an email..."
+                    />
+                </Box>
+
+                <Box mt={2} textAlign="right" >
+                    <LoadingButton 
+                        variant="contained"
+                        endIcon={<SendRoundedIcon />}
+                        loading={sending}   
+                        loadingPosition="end"
+                        onClick={handleSendEmail}
+                    >
+                        Send
+                    </LoadingButton>
+                </Box>
+            </Section>
+
+            <Snackbar 
+                anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+                open={openSnack}
+                autoHideDuration={6000}
+                onClose={ () => setOpenSnack(false)}
+            >
+                <Alert variant="filled" onClose={ () => setOpenSnack(false)} severity="success" sx={{ width: '100%' }} >
+                    {alertMsg}
+                </Alert>
+            </Snackbar>
+        </React.Fragment>
+    )
+}
+
 
 const MenteeAppointment = ({ appointment, user }) => {
     const [openRating, setOpenRating] = useState(false);
@@ -438,7 +568,7 @@ const MentorAppointment = ({ appointment }) => {
                         {sched?._id?.approved && moment(sched?._id?.to).isBefore() && 
                         <Box sx={{ pt: 2 }}>
                             <Typography>
-                                Status: { sched?._id?.rated ? "Rated" : "Pending" }
+                                Status: { sched?._id?.rating?.rated ? "Rated" : "Pending" }
                             </Typography>
                         </Box>}
 
@@ -600,24 +730,27 @@ const MentorSchedule = ({ setTo, setSetTo, menteeList, from, setFrom, to, setToE
 
 const MenteeList = ({mentee}) => {
     return (
-        <Box sx={{ mt: 5 }} >
+        <Box sx={{width: "100%" }} >
             <Section title="Mentees" subtitle="Lists of your Mentees.">
 
-            <Stack  sx={{ mt: 2 }} direction="row" gap={5}>
+            <Stack sx={{ mt: 2 }}  gap={4}>
                 {mentee?.map( (i, index) => (
-                        <Box key={index}>
-                            <Avatar 
-                                src={i?._id?.img} 
-                                alt={i?._id?.ref_id}  
-                                variant="rounded"
-                                sx={{
-                                    height: 200,
-                                    width: "100%"
-                                }}
-                            />
-                            <Typography  textTransform="capitalize" align="center" >{i?._id?.firstname} {i?._id?.lastname}</Typography>
-                            <Typography fontWeight={300} >{i?._id?.email}</Typography>
+                    <Stack key={index} direction="row" >
+                        <Avatar 
+                            src={i?._id?.img} 
+                            alt={i?._id?.ref_id}  
+                            // variant="rounded"
+                            sx={{
+                                height: 100,
+                                width: 100
+                            }}
+                        />
+                        <Box ml={2}>
+                            <Typography variant="h6" textTransform="capitalize" >{i?._id?.firstname} {i?._id?.lastname}</Typography>
+                            <Typography fontWeight={300} >{i?._id?.email}</Typography>  
                         </Box>
+                        
+                    </Stack>
                 ))}
             </Stack>
 
@@ -628,24 +761,27 @@ const MenteeList = ({mentee}) => {
 
 const MentorList = ({mentor}) => {
     return (
-        <Box sx={{ mt: 5, mb: 5 }} >
+        <Box sx={{ mt: 5, mb: 5, width: "100%" }} >
             <Section title="Mentors" subtitle="Lists of your Mentors.">
                 {console.log("mentopr: ", mentor)}
-                <Stack  sx={{ mt: 2 }} direction="row" gap={5}>
+                <Stack  sx={{ mt: 2 }} gap={5}>
                     {mentor?.map( (i, index) => (
-                        <Box key={index}>
-                            <Avatar 
-                                src={i?._id?.img} 
-                                alt={i?._id?.ref_id}  
-                                variant="rounded"
-                                sx={{
-                                    height: 200,
-                                    width: "100%"
-                                }}
-                            />
-                            <Typography  textTransform="capitalize" align="center" >{i?._id?.firstname} {i?._id?.lastname}</Typography>
-                            <Typography fontWeight={300} >{i?._id?.email}</Typography>
+                       <Stack key={index} direction="row" >
+                        <Avatar 
+                            src={i?._id?.img} 
+                            alt={i?._id?.ref_id}  
+                            // variant="rounded"
+                            sx={{
+                                height: 100,
+                                width: 100
+                            }}
+                        />
+                        <Box ml={2}>
+                            <Typography variant="h6" textTransform="capitalize" >{i?._id?.firstname} {i?._id?.lastname}</Typography>
+                            <Typography fontWeight={300} >{i?._id?.email}</Typography>  
                         </Box>
+                        
+                    </Stack>
                     ))}
                 </Stack>
             </Section>
@@ -655,92 +791,25 @@ const MentorList = ({mentor}) => {
 
 const Section = ({ title, subtitle, children }) => {
     return (
-        <Box width="100%">
+        <Box width="100%" >
             <Typography variant="h5" fontWeight="bold" mb={1} >
                 {title}
             </Typography>
 
             <Divider />
 
-            <Typography variant="h6" fontWeight={500} mb={1} mt={5}>
-                {subtitle}
-            </Typography>
-            {children}
+            <Box maxHeight="800px" overflow="auto">
+
+                <Typography variant="h6" fontWeight={500} mb={1} mt={5}>
+                    {subtitle}
+                </Typography>
+                {children}
+            </Box>
+
         </Box>
     );
 };
 
-const LinkTab = ({ ...props }) => {
-    return (
-        <Tab
-            onClick={(event) => {
-                event.preventDefault();
-            }}
-            {...props}
-            disableRipple
-            disableFocusRipple
-            sx={{
-                color: "#172E59",
-                fontSize: "inherit",
-                borderRight: 1,
-                borderColor: "divider",
-            }}
-        />
-    );
-};
 
-const TabPanel = (props) => {
-    const { children, value, index, ...other } = props;
-
-    return (
-        <div
-            role="tabpanel"
-            hidden={value !== index}
-            id={`full-width-tabpanel-${index}`}
-            aria-labelledby={`full-width-tab-${index}`}
-            {...other}
-        >
-            {value === index && (
-                <Box sx={{ p: 3 }}>
-                    <Typography>{children}</Typography>
-                </Box>
-            )}
-        </div>
-    );
-};
-
-// const UserTab = () => {
-//     const [tab, setTab] = useState(0);
-
-//     const handleChange = (event, newValue) => {
-//         setTab(newValue);
-//     };
-//     return (
-//         <Stack mb={5} width="100%">
-//             <Tabs
-//                 value={tab}
-//                 onChange={handleChange}
-//                 textColor="primary"
-//                 TabIndicatorProps={{
-//                     style: { backgroundColor: "inherit", color: "red" },
-//                 }}
-//             >
-//                 <LinkTab label="Page One" href="/drafts" />
-//                 <LinkTab label="Page Two" href="/trash" />
-//                 <LinkTab label="Page Three" href="/spam" />
-//             </Tabs>
-
-//             <TabPanel value={tab} index={0}>
-//                 one
-//             </TabPanel>
-//             <TabPanel value={tab} index={1}>
-//                 2
-//             </TabPanel>
-//             <TabPanel value={tab} index={2}>
-//                 3
-//             </TabPanel>
-//         </Stack>
-//     );
-// };
 
 export default UserProfile;

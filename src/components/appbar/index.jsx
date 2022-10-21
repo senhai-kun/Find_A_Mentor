@@ -115,7 +115,7 @@ const Header = () => {
                             justifyContent="space-between"
                             alignItems="center"
                         >
-                            <Typography variant="h5" fontWeight="bolder">
+                            <Typography onClick={ () => navigate("/")} variant="h5" fontWeight="bolder"sx={{ cursor: "pointer" }} >
                                 MENTOR
                             </Typography>
 

@@ -101,6 +101,8 @@ const Settings = () => {
             console.log(error)
         } finally {
             setLoading(false)
+            window.location.reload();
+
         }
         // if (user.img !== profileImage) {
             // dispatch(updateProfile({ img: profileImage, ismentor: user?.ismentor, ref_id: user?.ref_id, firstname, lastname, location}));
@@ -273,6 +275,8 @@ const MentorSettings = ({ user }) => {
 
             } catch (error) {
                 console.log(error.response)
+            } finally {
+                window.location.reload();
             }
 
         }

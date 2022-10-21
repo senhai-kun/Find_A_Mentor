@@ -25,6 +25,22 @@ html {
 }
 
 @keyframes floater {
-  0%{transform: translateY(-10%);transition: ease 0.5s;}
-  50%{transform: translateY(10%);transition: ease 0.5s;}
+  0%{transform: translateY(-5%);transition: ease-in-out 0.5s;}
+  50%{transform: translateY(5%);transition: ease-in-out 0.5s;}
+}
+
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
 }

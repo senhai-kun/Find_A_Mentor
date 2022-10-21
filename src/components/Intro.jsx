@@ -13,6 +13,8 @@ import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownR
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { isLoggedIn } from "../redux/slicer/authSlice";
+// const bg = React.lazy( () => import("../asset/map.svg") );
+
 
 const animation = makeStyles((theme) => ({
     float: {
@@ -125,7 +127,7 @@ const Intro = () => {
                             alt="logo"
                             width="100%"
                             height="100%"
-                            className={classes.float}
+                            // className={classes.float}
                         />
                     </Box>
                 </Stack>

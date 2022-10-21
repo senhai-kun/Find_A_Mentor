@@ -3,6 +3,7 @@ import { makeStyles } from '@mui/styles'
 import { styled } from '@mui/system'
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
+import convo from "../asset/groups.png"
 
 const style = makeStyles( (theme) => ({
     bg: {
@@ -13,12 +14,12 @@ const style = makeStyles( (theme) => ({
     }
 }))
 
-const convo = 'https://cdn.mentorcruise.com/img/home/screenshots/conversation_1x.png'
+// const convo = 'https://cdn.mentorcruise.com/img/home/screenshots/conversation_1x.png'
 const ava1 = 'https://cdn.mentorcruise.com/img/faces/ayla.png'
 
 const Image = styled('img')( () => ({
     width:  550,
-    height: 500,
+    height: 400,
 }) )
 
 const CardDetails = ({ title, sub, notAvail }) => {
@@ -74,29 +75,40 @@ const Recommended = () => {
     return (
         <Box className={classes.bg} >
             <Container>
-                <Box sx={{ textAlign: 'center', mb: 5 }} >
-                    <Image 
-                        src={convo}
-                        alt="img"
-                        sx={{
-                            width: {
-                                xs: 300,
-                                sm: 450,
-                                md: 650
-                            },
-                            height: {
-                                xs: 300,
-                                sm: 400,
-                                md: 550
-                            }
-                        }}
-                    />
+                <Stack direction={{ xs: "column", md: "row" }} alignItems="center" >
+                    <Box className='section' sx={{ textAlign: 'center', mb: 1, width: '100%', scrollMargin: 80 }} >
+                        <Image 
+                            src={convo}
+                            alt="img"
+                            sx={{
+                                width: {
+                                    xs: 300,
+                                    sm: 450,
+                                    md: 650
+                                },
+                                height: {
+                                    xs: 300,
+                                    sm: 400,
+                                    md: 450
+                                },
+                                mt: { xs: 2, md: 5},
+                                mb: { xs: 2, md: 5}
+                            }}
+                        />
 
-                </Box>
+                    </Box>
 
-                <Typography className='section' variant="h3" align='center' fontWeight='400' sx={{ mt: 10, mb: 10, scrollMargin: 80  }} >An arsenal of industry veterans and mentoring packages at a flexible price.</Typography>
+                    <Box width="100%">
+                        <Typography variant="h3" align='center' fontWeight='500' sx={{ mt: 10, mb: 10  }} >
+                            Explore and Meet different people who can guide you to your own journey.
+                        </Typography>
+                    </Box>
+
+                </Stack>
+                
+
                         
-                <Stack direction='row' justifyContent='center' flexWrap="wrap" flexGrow={1} >
+                {/* <Stack direction='row' justifyContent='center' flexWrap="wrap" flexGrow={1} >
                     <Card 
                         name="Ayla S."
                         course="Marketing Expert"
@@ -117,10 +129,10 @@ const Recommended = () => {
                         img={ava1}
                     />
                    
-                </Stack>
+                </Stack> */}
                 
                 <Box sx={{ textAlign: 'center', mt: 5 }} >
-                    <Button onClick={ () => navigate('/search', { replace: true }) } variant='contained' color='secondary' size='large' sx={{ width: { xs: '80%', sm: '40%' } }} >Find my mentor</Button>
+                    <Button onClick={ () => navigate('/search', { replace: true }) } variant='contained' color='primary' size='large' sx={{ width: { xs: '80%', sm: '40%' } }} >Find my mentor</Button>
                 </Box>
             
             </Container>

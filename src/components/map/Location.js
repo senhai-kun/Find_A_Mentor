@@ -169,11 +169,11 @@ const Location = ({ userCoordinates, mentorCoordinates}) => {
                     }}
                 />
                 <MyMap />
-                <Marker position={position}>
+                {/* <Marker position={mentorCoordinates}>
                     <Popup>
                         A pretty CSS3 popup. <br /> Easily customizable.
                     </Popup>
-                </Marker>
+                </Marker> */}
                 {check && (
                     <Route start={userCoordinates} end={mentorCoordinates} summary={setSummary} />
                 )}

@@ -5,6 +5,7 @@ import { store } from "./redux/store";
 import { Provider } from "react-redux";
 import GlobalListener from "./globals/GlobalListener";
 import ScrollToTop from "./globals/ScrollToTop";
+import axios from "axios";
 
 // notes
 // add href to helmet (DONE)

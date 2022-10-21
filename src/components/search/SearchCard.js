@@ -23,14 +23,14 @@ const SearchCard = ({ fullname, img, profession, rating, isVerified, bookmark, a
 
                     <Box width='100%' >
                         <Stack direction='row' spacing={1} >
-                            <Typography variant='h5' fontWeight='bolder' mt={1} textTransform="capitalize" >{fullname}</Typography>
+                            <Typography variant='h4' fontWeight='bolder' mt={1} textTransform="capitalize" onClick={ () => navigate(`/mentor/profile/${ref_id}/${fullname.replace(" ", "_")}`)} >{fullname}</Typography>
                             <VerifiedRoundedIcon sx={{ display: isVerified ? 'block' : 'none' }} fontSize='small' color='primary' />
                         </Stack>
 
                         <Typography variant='body1' mb={1} >{profession}</Typography>
 
                         <Stack direction='row' alignItems='center' spacing={1} >
-                            <Rating  defaultValue={rating} size='small' readOnly />
+                            <Rating  defaultValue={rating} size="medium" readOnly precision={0.1} />
                             <Typography>({rating}) ratings</Typography>
                         </Stack>
 
@@ -71,7 +71,7 @@ const SearchCard = ({ fullname, img, profession, rating, isVerified, bookmark, a
                         
                         
                         <Stack direction={{ xs: 'column', sm: 'column', md: 'row' }} alignItems='center' mb={2} spacing={1} >
-                            <Button onClick={ () => navigate(`/mentor/profile/${ref_id}/${fullname.replace(" ", "_")}`)} variant='contained' color='primary' size='large' sx={{ width: { xs: '100%', sm: '90%', md: '30%' } }} >Enroll Now!</Button>
+                            <Button onClick={ () => navigate(`/mentor/profile/${ref_id}/${fullname.replace(" ", "_")}`)} variant='contained' color='primary' size='large' sx={{ width: { xs: '100%', sm: '90%', md: '30%' } }} >View Profile</Button>
                         
                             {/* <Typography variant='h6' >
                                 Only

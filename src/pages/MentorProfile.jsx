@@ -172,7 +172,7 @@ const MentorProfile = () => {
 
     console.log("enroll: ",  enrolled)
 
-    return loading ? "loading..." : (
+    return (
         <React.Fragment>
             <Header title={`${mentor?.firstname} ${mentor?.lastname}`} />
             <AppbarSpace divider />
@@ -216,12 +216,12 @@ const MentorProfile = () => {
 
                             <Stack direction="row" flexWrap="wrap" gap={1}>
                                 <Stack gap={1}>
-                                    <Details
-                                        label="Manila, PH"
+                                    { mentor?.coordinates?.address && <Details
+                                        label={mentor?.coordinates?.address}
                                         icon={
                                             <LocationOnOutlinedIcon color="info" />
                                         }
-                                    />
+                                    />}
                                     <Details
                                         label={mentor?.email}
                                         icon={
@@ -245,7 +245,7 @@ const MentorProfile = () => {
                             { userLoggedIn ? user?.ismentor ? "Cannot enroll as Mentor" : enrolled ? "Enrolled" : "Enroll as Mentee" : "Login to Apply!" }
                         </Button>
 
-                        <Typography variant="h6" align="center" mt={1}>
+                        {/* <Typography variant="h6" align="center" mt={1}>
                             Only
                             <Typography
                                 variant="h6"
@@ -255,7 +255,7 @@ const MentorProfile = () => {
                                 {" "}
                                 ₱250 /month
                             </Typography>
-                        </Typography>
+                        </Typography> */}
                     </Box>
                 </Stack>
             </Container>
@@ -274,12 +274,14 @@ const MentorProfile = () => {
                             <Section title="Skills">
                                 <Stack direction="row" gap={2} flexWrap="wrap">
                                     {mentor?.details?.skills.map((i, e) => (
-                                        <Chip
-                                            key={e}
-                                            label={i}
-                                            color="primary"
-                                            onClick={() => console.log("asd")}
-                                        />
+                                        <React.Fragment key={e}>
+                                            {/* <Chip
+                                                label={i}
+                                                color="primary"
+                                                onClick={() => console.log("asd")}
+                                            /> */}
+                                            <Typography sx={{ borderRadius: 6, p: 1, pr: 2, pl: 2, border: "1px solid black" }} variant="button" >{i}</Typography>
+                                        </React.Fragment>
                                     ))}
                                 </Stack>
                             </Section>
@@ -315,7 +317,9 @@ const MentorProfile = () => {
                                     justifyContent="center"
                                 >
                                     {userLoggedIn ? (
-                                        <Location userCoordinates={user?.coordinates} mentorCoordinates={mentor?.coordinates} />
+                                        <>
+                                            {mentor.coordinates && <Location userCoordinates={user?.coordinates} mentorCoordinates={mentor?.coordinates} />}
+                                        </>
                                     ) : (
                                         <Box>
                                             <Typography
@@ -367,7 +371,7 @@ const MentorProfile = () => {
 const Section = ({ title, children }) => {
     return (
         <Box width="100%" mb={5}>
-            <Typography variant="h5" fontWeight={600} mb={3}>
+            <Typography variant="h4" fontWeight={600} mb={3}>
                 {title}
             </Typography>
             {children}

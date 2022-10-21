@@ -19,6 +19,7 @@ const createRoutineMachineLayer = (props) => {
     draggableWaypoints: false,
     fitSelectedRoutes: true,
     showAlternatives: false,
+    waypointMode: "snap"
     // summaryTemplate: false
 
   });
