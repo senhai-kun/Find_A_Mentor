@@ -24,6 +24,7 @@ import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { userData } from "../../redux/slicer/userSlice";
+import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 
 const style = makeStyles((theme) => ({
     menuWrapper: {
@@ -165,11 +166,13 @@ const Header = () => {
                                 ) : (
                                     <React.Fragment>
                                         <Button
-                                            type="text"
+                                            variant="text"
                                             color="inherit"
                                             onClick={navigateFindMentor}
+                                            startIcon={<SearchRoundedIcon />}
+                                            
                                         >
-                                            Find a Mentor
+                                            Search
                                         </Button>
 
                                         <UserMenu user={user} />

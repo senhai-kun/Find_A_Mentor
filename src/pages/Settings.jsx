@@ -15,6 +15,7 @@ import {
     MenuItem,
     Chip,
     useMediaQuery,
+    Autocomplete,
 } from "@mui/material";
 import InsertPhotoOutlinedIcon from "@mui/icons-material/InsertPhotoOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
@@ -34,6 +35,7 @@ import axios from 'axios';
 import baseUrl from "../utils/baseUrl";
 import Location from "../components/map/Location";
 import SettingLocation from "../components/map/SettingLocation";
+import professions from "../utils/professions";
 
 const Input = styled("input")({
     display: "none",
@@ -308,29 +310,17 @@ const MentorSettings = ({ user }) => {
                 onSubmit={handleSubmit}
             >   
                 <Typography variant="h5" fontWeight={500}>Profession</Typography>
-                <TextField
-                    size="small"
-                    select
+                <Autocomplete 
                     sx={{ pt: 1 }}
                     value={profession}
-                    onChange={(e) => setProfession(e.target.value)}
-                    fullWidth
-                    required
-                >
-                    <MenuItem disabled divider value="placeholder">
-                        Please select your profession
-                    </MenuItem>
-                    <MenuItem value="Engineering">Engineering</MenuItem>
-                    <MenuItem value="Information Technology">
-                        Information Technology
-                    </MenuItem>
-                    <MenuItem value="Business & Management">
-                        Business & Management
-                    </MenuItem>
-                    <MenuItem value="Product & Marketing">
-                        Product & Marketing
-                    </MenuItem>
-                </TextField>
+                    // multiple={true}
+                    placeholder="Select your profession..."
+                    onChange={(e, newVal) => setProfession(newVal)}
+                    options={professions}
+                    size="small"
+                    autoHighlight
+                    renderInput={ params => <TextField {...params} required /> }
+                />
                 
                 <Box sx={{ pt: 4 }}>
                     <Typography variant="h5" fontWeight={500} >

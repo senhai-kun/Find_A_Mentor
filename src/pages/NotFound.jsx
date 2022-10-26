@@ -1,56 +1,22 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import baseUrl from "../utils/baseUrl";
+import { Container, Typography } from "@mui/material";
+import React from "react";
+import notFound from "../asset/404.gif"
+import AppbarSpace from "../reusable/AppbarSpace";
 
 const NotFound = () => {
-    const [data, setData] = useState([]);
 
-    useEffect( () => {
+    return (
+        <Container sx={{ textAlign: "center" }} >
+            <AppbarSpace />
+            <img 
+                alt="404 not found"
+                width="80%"
 
-        axios.get(`${baseUrl}/find`).then( res => {
-            console.log(res.data);
-            setData(res.data.schedule)
-        })
-
-    }, [])
-
-    return data.length !== 0 && (
-        <div style={{ marginTop: "10vh", padding: "50px" }}>
-            <style>
-                
-            </style>
-            <h1>SCHEDULE</h1>
-
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>FROM</th>
-                        <th>TO</th>
-                        <th>APPROVED</th>
-                        <th>DONE</th>
-                        <th>RATE</th>
-                        <th>RATED</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {data.map( i => (
-                        <React.Fragment key={i._id}>
-                            <tr>
-                                <td>{i._id}</td>
-                                <td>{i.from}</td>
-                                <td>{i.to}</td>
-                                <td>{i.approved ? "true" : "false"}</td>
-                                <td>{i.done ? "true" : "false"}</td>
-                                <td>{i.rating.rate}</td>
-                                <td>{i.rating.rated ? "true" : "false"}</td>
-                            </tr>
-                        </React.Fragment>
-                    ))}
-                </tbody>
-            </table>
-
-        </div>
+                src={notFound}
+            />
+            <Typography>The page you're looking for is not here, but don't worry we've hired our best detectives to find it.</Typography>
+            <Typography>Go back to </Typography> <Typography component="a" color="primary" href="/" > Home.</Typography>
+        </Container>
     );
 };
 

@@ -132,7 +132,7 @@ const Recommended = () => {
                 </Stack> */}
                 
                 <Box sx={{ textAlign: 'center', mt: 5 }} >
-                    <Button onClick={ () => navigate('/search', { replace: true }) } variant='contained' color='primary' size='large' sx={{ width: { xs: '80%', sm: '40%' } }} >Find my mentor</Button>
+                    <Button onClick={ () => navigate('/search', { replace: true }) } variant='contained' color='primary' size='large' sx={{ width: { xs: '80%', sm: '40%' } }} >Browse Mentors</Button>
                 </Box>
             
             </Container>

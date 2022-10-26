@@ -10,6 +10,7 @@ import axios from "axios";
 // notes
 // add href to helmet (DONE)
 // clear logs
+// rerender problems
 
 function App() {
 

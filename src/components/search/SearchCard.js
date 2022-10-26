@@ -64,7 +64,7 @@ const SearchCard = ({ fullname, img, profession, rating, isVerified, bookmark, a
                             }}
                         >
                             {skills.map( (i, e) => (
-                                <Chip key={e} label={i} onClick={ () => console.log("Chip") } />
+                                <Chip key={e} label={i}  />
                             ))}
                             
                         </Stack>

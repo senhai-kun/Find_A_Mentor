@@ -1,5 +1,5 @@
-import React from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import Header from "../components/appbar";
 import LandingPage from "./LandingPage";
 import LoginContainer from "./LoginContainer";
@@ -12,9 +12,26 @@ import RequireAuth from "../auth/RequireAuth";
 import Protected from "../auth/Protected";
 import NotFound from "./NotFound";
 import Chat from "./Chat";
+import { useSelector } from "react-redux";
+import { userData } from "../redux/slicer/userSlice";
+import { isLoading } from "../redux/slicer/authSlice";
 
 const Pages = () => {
+    const user = useSelector(userData);
+    const loading = useSelector(isLoading);
+
     const { pathname } = useLocation();
+    const navigate = useNavigate();
+
+    useEffect( () => {
+        console.log(user)
+        if( !loading ) {
+            if( !user.profession ) {
+                navigate("/getting_started", { replace: true });
+
+            }
+        }
+    }, [user, loading]);
 
     return (
         <React.Fragment>

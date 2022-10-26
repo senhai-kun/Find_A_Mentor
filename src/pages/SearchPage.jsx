@@ -16,8 +16,12 @@ import AppbarSpace from "../reusable/AppbarSpace";
 import Header from "../components/Header";
 import axios from 'axios';
 import baseUrl from "../utils/baseUrl";
+import { useSelector } from "react-redux";
+import { isLoading } from "../redux/slicer/authSlice";
+import Loading from "../reusable/Loading";
 
 const SearchPage = () => {
+    const loading = useSelector(isLoading);
     const [data, setData] = useState(false);
     const [mentors, setMentors] = useState([]);
     const [filtered, setFiltered] = useState([]);
@@ -39,7 +43,7 @@ const SearchPage = () => {
         fetchAllMentors();
     }, [])
 
-    return (
+    return loading ? <Loading /> : (
         <React.Fragment>
             <Header title="Search a Mentor" />
 

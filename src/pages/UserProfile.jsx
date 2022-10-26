@@ -23,6 +23,7 @@ import {
     DialogActions,
     Snackbar,
     Alert,
+    DialogContentText,
 } from "@mui/material";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import LocalPhoneOutlinedIcon from "@mui/icons-material/LocalPhoneOutlined";
@@ -45,6 +46,7 @@ import DoneAllRoundedIcon from '@mui/icons-material/DoneAllRounded';
 import ChatIcon from '@mui/icons-material/Chat';
 import { useNavigate } from "react-router-dom";
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
+import Loading from "../reusable/Loading";
 
 const Details = ({ icon, label, variant, size }) => {
     return (
@@ -65,12 +67,16 @@ const UserProfile = () => {
     const [date, setDate] = useState(null);
     const [mentor, setMentor] = useState([])
     const [menteeList, setMenteeList] = useState([]);
+    const [scheduleList, setScheduleList] = useState([]);
     const [setTo, setSetTo] = useState('');
     const [appointments, setAppointments] = useState([]);
     const [menteeSched, setMenteeSched] = useState([]);
     
     const [from, setFrom] = useState(null);
-    const [to, setToEnd] = useState(null)
+    const [to, setToEnd] = useState(null);
+    const [open, setOpen] = useState(false);
+
+    const [loading, setLoading] = useState(true);
 
     useEffect( () => {  
         const source = axios.CancelToken.source();
@@ -91,6 +97,7 @@ const UserProfile = () => {
                 if( user_profile.data.ismentor ) {
                     setMenteeList(user_profile.data.mentor.mentee);
                     setAppointments(user_profile.data.mentor.mentee.filter( i => i.schedule.length !== 0 ) );
+                    setScheduleList(user_profile.data.mentor.mentee.map( i => i.schedule.filter( s => s._id ) ).flat())
                 } else {
                     // mentee profile dashboard
                     // console.log("get: ", user_profile.data.mentee.map( i => ({ ...i, mentee: i.mentee.filter( data => data._id.ref_id === user.ref_id ) }) ).sort( (a,b) => Number(a.map( mentee => mentee.map( sched => sched.map( i => i._id.approved ) ) )) - Number(b.map( mentee => mentee.map( sched => sched.map( i => i._id.approved ) ) )) ) );
@@ -99,7 +106,10 @@ const UserProfile = () => {
                     setMenteeSched(user_profile.data.mentee.map( i => ({ ...i, mentee: i.mentee.filter( data => data._id.ref_id === user.ref_id ).map( a => ({ ...a, schedule: a.schedule.filter( sched => sched._id.approved === false ) })) }) ));
                 }
             } catch (error) {
-                console.log(error)
+                console.log(error);
+                // alert(`Internal server error: ${error}`);
+            } finally {
+                setLoading(false);
             }
         }
         
@@ -112,12 +122,27 @@ const UserProfile = () => {
 
     console.log("appoi: ",appointments );
     console.log("mentee sched: ",menteeSched )
+    console.log("get sched only: ", menteeList.map( i => i.schedule.filter( s => s._id ) ).flat() );
 
     const handleMentorSchedule = async () => {
 
         if( setTo !== "" && from !== null && to !== null ) {
-            try {
 
+            // overlap means that mentor have same datetime start schedule
+            let overlap = scheduleList.some( i => { 
+                return i._id.from === from;
+            })
+            
+            if(overlap) {
+                // alert("Your schedule is overlapped");
+                setOpen(true)
+            }
+        }
+
+    }
+
+    const saveSchedule = async () => {
+         try {
                 const sched = await axios.post(`${baseUrl}/mentor/schedule`, { 
                     from, 
                     to, 
@@ -134,11 +159,9 @@ const UserProfile = () => {
             } catch (error) {
                 console.log(error.response)
             }
-        }
-
     }
 
-    return (    
+    return loading ? <Loading /> :  (    
         <React.Fragment>
             <Header title="Dashboard" />
             <AppbarSpace divider />
@@ -202,7 +225,7 @@ const UserProfile = () => {
                             />
                         }
                     >
-                        <Section title="Appointments" subtitle="Today">
+                        <Section title="Appointments" subtitle="Schedule's Lists">
                             <Stack direction="column" gap={2}>
 
                                 {user?.ismentor ? <MentorAppointment appointment={appointments} /> : <MenteeAppointment appointment={appointments} user={user} /> }
@@ -236,7 +259,28 @@ const UserProfile = () => {
                     
                 </Container>
             </Box>
-
+            
+            <Dialog
+                open={open}
+                // onClose={ () => setOpen(false) }
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                    Your schedule is overlapped!
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        If you wish to make the same schedule to your mentee press "Mark The Schedule"
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button variant="contained" color="error" onClick={ () => setOpen(false) }>Cancel</Button>
+                    <Button onClick={saveSchedule}>
+                        mark the schedule
+                    </Button>
+                </DialogActions>
+            </Dialog>
             <Footer />
         </React.Fragment>
     );
@@ -496,10 +540,14 @@ const MentorAppointment = ({ appointment }) => {
                 fontWeight="bold"
                 textTransform="capitalize"
                 variant="h5"
-                align="center"
+                // align="center"
             >
                 {mentee?._id?.firstname} {mentee?._id?.lastname}
             </Typography>
+            <Typography variant="body1" fontWeight={300} >
+                {mentee?._id?.email}
+            </Typography>
+
             { mentee.schedule.map( sched => (
                 <React.Fragment key={sched._id._id}>
                     <Divider>
@@ -528,6 +576,7 @@ const MentorAppointment = ({ appointment }) => {
                             alignItems="center"
                         >
                             <Box>
+                                {/* <Avatar alt={mentee?._id?.firstname} src={mentee?._id?.img}  />
                                 <Typography
                                     fontWeight="bold"
                                     color="inherit"
@@ -538,23 +587,23 @@ const MentorAppointment = ({ appointment }) => {
                                 </Typography>
                                 <Typography
                                     variant="body2"
-                                    fontWeight={300}
+                                    fontWeight={300}    
                                 >
                                     {mentee?._id?.email}
-                                </Typography>
+                                </Typography> */}
 
-                                <Stack sx={{ mt: 2 }}>
+                                <Stack sx={{ mt: 0 }}>
                                     <Typography 
-                                        variant="body2"
-                                        fontWeight={300}
+                                        fontSize={17}
+                                        fontWeight={700}
                                     >
-                                        Start: {moment(sched?._id?.from).format('lll')}
+                                        Starts: {moment(sched?._id?.from).format('llll')}
                                     </Typography>
                                     <Typography
-                                        variant="body2"
-                                        fontWeight={300}
+                                        fontSize={17}
+                                        fontWeight={700}
                                     >
-                                        End: {moment(sched?._id?.to).format('lll')}
+                                        Ends: {moment(sched?._id?.to).format('llll')}
                                     </Typography>
                                 </Stack>
                             </Box>
@@ -687,14 +736,27 @@ const MentorSchedule = ({ setTo, setSetTo, menteeList, from, setFrom, to, setToE
     const [loading, setLoading] = useState(false);
 
     const handleSetDate = () => {
-        setLoading(true)
+        // setLoading(true)
         handleMentorSchedule()
     }
 
     return (
             <Section title="Schedule" subtitle="Set Schedule">
                 <Typography>Mentee Email</Typography>
-                <Select value={setTo} onChange={ e => setSetTo(e.target.value)} sx={{ mb: 3 }} size="small">
+                <Select 
+                    value={setTo} 
+                    onChange={ e => setSetTo(e.target.value)}
+                    sx={{ mb: 3 }} 
+                    size="small"
+                    // renderValue={ (selected) => {
+                    //     if (selected) {
+                    //         return <em>Select an email you wish to send</em>;
+                    //     }
+                    //     console.log("selected:", selected)
+
+                    //     return selected;
+                    // }}
+                >
                     {menteeList?.map( (i, index) => (
                         <MenuItem key={index} value={i?._id?.email} >{i?._id?.email}</MenuItem>
                     ))}

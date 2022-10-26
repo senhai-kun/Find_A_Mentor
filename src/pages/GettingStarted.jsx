@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
+    Autocomplete,
     Box,
     Button,
     Chip,
@@ -15,6 +16,11 @@ import HighlightOffRoundedIcon from "@mui/icons-material/HighlightOffRounded";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import baseUrl from "../utils/baseUrl";
+import professions from "../utils/professions";
+import { useSelector } from "react-redux";
+import { userData } from "../redux/slicer/userSlice";
+import { isLoading } from "../redux/slicer/authSlice";
+import Loading from "../reusable/Loading";
 /*
     notes: 
         counting words (done)
@@ -23,16 +29,30 @@ import baseUrl from "../utils/baseUrl";
 
 const GettingStarted = () => {
 
+    const user = useSelector(userData);
+    const loading = useSelector(isLoading);
+
     const mobile = useMediaQuery( theme => theme.breakpoints.down("sm") );
     const navigate = useNavigate();
 
-    const [profession, setProfession] = useState("placeholder");
+    const [profession, setProfession] = useState("");
+    // const [profession, setProfession] = useState([]);
     // const [customCategory, setCustomCategory] = useState("");
 
     const [skill, setSkill] = useState([]);
     const [addSkill, setAddSkill] = useState("");
     const [about, setAbout] = useState("");
     const [count, setCount] = useState(0);
+
+    useEffect( () => {
+        console.log(user)
+        if( !loading ) {
+            if( user.profession ) {
+                navigate("/search", { replace: true });
+
+            }
+        }
+    }, [user, loading]);
 
     const handleDeleteSkill = (indexToDelete) => {
         setSkill( currentList => currentList.filter( (_, index) => indexToDelete !== index ) )
@@ -78,7 +98,7 @@ const GettingStarted = () => {
         
     }
 
-    return (
+    return loading ? <Loading /> : (
         <React.Fragment>
             <Container sx={{ p: 2 }} component="form" onSubmit={handleSubmit}>
                 <Typography variant="h3" fontWeight="bold" pt={4}>
@@ -90,7 +110,18 @@ const GettingStarted = () => {
                         What is your Field Expertise/Profession?
                     </Typography>
 
-                    <TextField
+                    <Autocomplete 
+                        value={profession}
+                        // multiple={true}
+                        placeholder="Select your profession..."
+                        onChange={(e, newVal) => setProfession(newVal)}
+                        options={professions}
+                        size="small"
+                        autoHighlight
+                        renderInput={ params => <TextField {...params} required /> }
+                    />
+
+                    {/* <TextField
                         size="small"
                         select
                         sx={{ pt: 3 }}
@@ -112,6 +143,11 @@ const GettingStarted = () => {
                         <MenuItem value="Product & Marketing">
                             Product & Marketing
                         </MenuItem>
+                        {professions.map( i => (
+                            <MenuItem key={i} value={i} >
+                                {i}
+                            </MenuItem>
+                        ))} */}
 
                         {/* <MenuItem value={customCategory} > */}
                             {/* <Stack pl={2} pr={2} pt={1} gap={2}>
@@ -127,7 +163,7 @@ const GettingStarted = () => {
                                 </Button>
                             </Stack> */}
                         {/* </MenuItem> */}
-                    </TextField>
+                    {/* </TextField> */}
                 </Box>
 
                 <Box pt={5}>
@@ -158,11 +194,15 @@ const GettingStarted = () => {
                         />
                         <Button
                             onClick={() => {
-                                setSkill((currentList) => [
-                                    ...currentList,
-                                    addSkill,
-                                ]);
-                                setAddSkill("");
+                                
+                                if(addSkill.trim().length > 2 ) {
+                                    setSkill((currentList) => [
+                                        ...currentList,
+                                        addSkill,
+                                    ]);
+                                    setAddSkill("");
+                                }
+                               
                             }}
                             variant="contained"
                             color="info"

@@ -31,6 +31,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import axios from 'axios';
 import baseUrl from "../utils/baseUrl";
 import { userData } from "../redux/slicer/userSlice";
+import Loading from "../reusable/Loading";
 
 const Details = ({ icon, label, variant }) => {
     return (
@@ -172,7 +173,7 @@ const MentorProfile = () => {
 
     console.log("enroll: ",  enrolled)
 
-    return (
+    return loading ? <Loading /> : (
         <React.Fragment>
             <Header title={`${mentor?.firstname} ${mentor?.lastname}`} />
             <AppbarSpace divider />
