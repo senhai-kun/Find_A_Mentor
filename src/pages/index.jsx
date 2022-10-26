@@ -27,8 +27,11 @@ const Pages = () => {
     useEffect( () => {
         console.log(user)
         if( !loading ) {
-            if( loggedIn && user.ismentor && user.details.skills.length === 0 ) {
-                navigate("/getting_started", { replace: true });
+            if( loggedIn && user.ismentor ) {
+                if(user.details.skills.length === 0 ) {
+                    navigate("/getting_started", { replace: true });
+
+                }
 
             }
         }
