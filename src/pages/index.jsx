@@ -14,10 +14,11 @@ import NotFound from "./NotFound";
 import Chat from "./Chat";
 import { useSelector } from "react-redux";
 import { userData } from "../redux/slicer/userSlice";
-import { isLoading } from "../redux/slicer/authSlice";
+import { isLoading, isLoggedIn } from "../redux/slicer/authSlice";
 
 const Pages = () => {
     const user = useSelector(userData);
+    const loggedIn = useSelector(isLoggedIn);
     const loading = useSelector(isLoading);
 
     const { pathname } = useLocation();
@@ -26,7 +27,7 @@ const Pages = () => {
     useEffect( () => {
         console.log(user)
         if( !loading ) {
-            if( user.details.skills.length === 0 ) {
+            if( loggedIn && user.details.skills.length === 0 ) {
                 navigate("/getting_started", { replace: true });
 
             }
