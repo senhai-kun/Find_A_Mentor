@@ -47,7 +47,7 @@ const GettingStarted = () => {
     useEffect( () => {
         console.log(user)
         if( !loading ) {
-            if( user.profession ) {
+            if( user.details.skills.length !== 0 ) {
                 navigate("/search", { replace: true });
 
             }
