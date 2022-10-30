@@ -47,6 +47,7 @@ import ChatIcon from '@mui/icons-material/Chat';
 import { useNavigate } from "react-router-dom";
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import Loading from "../reusable/Loading";
+import Message from "../reusable/Message";
 
 const Details = ({ icon, label, variant, size }) => {
     return (
@@ -74,7 +75,8 @@ const UserProfile = () => {
     
     const [from, setFrom] = useState(null);
     const [to, setToEnd] = useState(null);
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(true);
+    const [alertMsg, setAlertMsg] = useState("");
 
     const [loading, setLoading] = useState(true);
 
@@ -126,17 +128,24 @@ const UserProfile = () => {
 
     const handleMentorSchedule = async () => {
 
-        if( setTo !== "" && from !== null && to !== null ) {
+        if( setTo !== "" && from !== null && to !== null ) { // if all have values
+
+            // if( from === to ) { // check if the datetime is the same
+
+            // }
 
             // overlap means that mentor have same datetime start schedule
-            let overlap = scheduleList.some( i => { 
-                return i._id.from === from;
-            })
+            // let overlap = scheduleList.some( i => { 
+            //     return i._id.from === from;
+            // })
+
+            // console.log("filter: ", menteeList.filter( i => i._id.email === setTo ).map( i => i.schedule.filter( s => s._id ) ) )
             
-            if(overlap) {
-                // alert("Your schedule is overlapped");
-                setOpen(true)
-            }
+            // if(overlap) {
+            //     // alert("Your schedule is overlapped");
+                // setOpen(true)
+            // }
+            await saveSchedule();
         }
 
     }
@@ -275,8 +284,8 @@ const UserProfile = () => {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button variant="contained" color="error" onClick={ () => setOpen(false) }>Cancel</Button>
-                    <Button onClick={saveSchedule}>
+                    <Button variant="outlined" color="error" onClick={ () => setOpen(false) }>Cancel</Button>
+                    <Button variant="contained" onClick={saveSchedule}>
                         mark the schedule
                     </Button>
                 </DialogActions>
@@ -423,12 +432,26 @@ const MenteeAppointment = ({ appointment, user }) => {
         }
     }
 
-    return appointment.map( (i,index) => (
+    return appointment.length === 0 ? <Message msg="Nothing here yet" variant="h6" align="center" /> : appointment.map( (i,index) => (
         // parent object mentor data
         <React.Fragment key={index}> 
             {i?.mentee?.map( mentee => (
                 // child mentee list
                 <React.Fragment key={mentee._id._id}>
+                    <Box mt={1} >
+                        <Typography
+                            fontWeight="bold"
+                            textTransform="capitalize"
+                            variant="h5"
+                            // align="center"
+                        >
+                            {i?._id?.firstname} {i?._id?.lastname}
+                        </Typography>
+                        <Typography variant="body1" fontWeight={300} >
+                            {i?._id?.email}
+                        </Typography>
+                       
+                    </Box>
                     {mentee?.schedule?.map( sched => (
                         // grand schedule list
                         <React.Fragment key={sched._id._id} >
@@ -458,31 +481,16 @@ const MenteeAppointment = ({ appointment, user }) => {
                                     alignItems="center"
                                 >
                                     <Box>
-                                        <Typography
-                                            fontWeight="bold"
-                                            color="inherit"
-                                            textTransform="capitalize"
-                                            variant="h6"
-                                        >
-                                            {i?._id?.firstname} {i?._id?.lastname}
-                                        </Typography>
-                                        <Typography
-                                            variant="body2"
-                                            fontWeight={300}
-                                        >
-                                            {i?._id?.email}
-                                        </Typography>
-
-                                        <Stack sx={{ mt: 2 }}>
+                                        <Stack sx={{ mt: 1 }}>
                                             <Typography 
-                                                variant="body2"
-                                                fontWeight={300}
+                                                fontSize={17}
+                                                fontWeight={700}
                                             >
                                                 Start: {moment(sched?._id?.from).format('lll')}
                                             </Typography>
                                             <Typography
-                                                variant="body2"
-                                                fontWeight={300}
+                                                fontSize={17}
+                                                fontWeight={700}
                                             >
                                                 End: {moment(sched?._id?.to).format('lll')}
                                             </Typography>
@@ -688,13 +696,13 @@ const MenteeSchedule = ({ menteeSched }) => {
                                                             variant="body2"
                                                             fontWeight={300}
                                                         >
-                                                            Start: <Typography component="span" variant="body2" fontWeight={500}>{moment(sched?._id?.from).format('lll')}</Typography>
+                                                            Start: <Typography component="span" fontSize={17} fontWeight={700}>{moment(sched?._id?.from).format('lll')}</Typography>
                                                         </Typography>
                                                         <Typography
                                                             variant="body2"
                                                             fontWeight={300}
                                                         >
-                                                            End: <Typography component="span" variant="body2" fontWeight={500}>{moment(sched?._id?.to).format('lll')}</Typography>
+                                                            End: <Typography component="span" fontSize={17} fontWeight={700}>{moment(sched?._id?.to).format('lll')}</Typography>
                                                         </Typography>
                                                     </Stack>
                                                 </Box>
@@ -735,8 +743,9 @@ const MenteeSchedule = ({ menteeSched }) => {
 const MentorSchedule = ({ setTo, setSetTo, menteeList, from, setFrom, to, setToEnd, handleMentorSchedule }) => {
     const [loading, setLoading] = useState(false);
 
-    const handleSetDate = () => {
+    const handleSetDate = (e) => {
         // setLoading(true)
+        e.preventDefault();
         handleMentorSchedule()
     }
 
@@ -762,7 +771,7 @@ const MentorSchedule = ({ setTo, setSetTo, menteeList, from, setFrom, to, setToE
                     ))}
                 </Select>
 
-                <Stack gap={1} direction="column">
+                <Stack component="form" onSubmit={handleSetDate} gap={1} direction="column">
                     <Typography>Start: </Typography>
                     <TextField 
                         type="datetime-local"
@@ -772,19 +781,22 @@ const MentorSchedule = ({ setTo, setSetTo, menteeList, from, setFrom, to, setToE
                         }}
                         inputProps={{ min: moment().format("YYYY-MM-DD[T]HH:mm") }}
                         size="small"
+                        required
                     />
                     <Typography>End: </Typography>
                     <TextField 
                         type="datetime-local"
+                        disabled={from === null && true}
                         value={to === null ? "" : to}
                         onChange={ (e) => {
                             setToEnd(e.target.value);
 
                         }}
-                        inputProps={{ min: moment().format("YYYY-MM-DD[T]HH:mm") }}
+                        inputProps={{ min: moment(from).add(1, "minutes").format("YYYY-MM-DD[T]HH:mm") }}
                         size="small"
+                        required
                     />
-                    <LoadingButton loading={loading} variant="contained" onClick={handleSetDate}>Set Date</LoadingButton>
+                    <LoadingButton type="submit" loading={loading} variant="contained" >Set Date</LoadingButton>
                 </Stack>
             </Section>
     )
@@ -822,6 +834,8 @@ const MenteeList = ({mentee}) => {
 }
 
 const MentorList = ({mentor}) => {
+    const navigate = useNavigate();
+
     return (
         <Box sx={{ mt: 5, mb: 5, width: "100%" }} >
             <Section title="Mentors" subtitle="Lists of your Mentors.">
@@ -840,7 +854,11 @@ const MentorList = ({mentor}) => {
                         />
                         <Box ml={2}>
                             <Typography variant="h6" textTransform="capitalize" >{i?._id?.firstname} {i?._id?.lastname}</Typography>
-                            <Typography fontWeight={300} >{i?._id?.email}</Typography>  
+                            <Typography fontWeight={300} >{i?._id?.email}</Typography> 
+
+                            <Box pt={1} >
+                                <Button variant="outlined" size="small" color="inherit" onClick={ () => navigate(`/mentor/profile/${i?._id?.ref_id}/${i?._id?.firstname + "_" + i?._id?.lastname}`) } >View Profile</Button>
+                            </Box> 
                         </Box>
                         
                     </Stack>
@@ -860,8 +878,7 @@ const Section = ({ title, subtitle, children }) => {
 
             <Divider />
 
-            <Box maxHeight="800px" overflow="auto">
-
+            <Box maxHeight="800px" overflow="auto" p={1} > 
                 <Typography variant="h6" fontWeight={500} mb={1} mt={5}>
                     {subtitle}
                 </Typography>

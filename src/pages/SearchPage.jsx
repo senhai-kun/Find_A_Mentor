@@ -19,6 +19,7 @@ import baseUrl from "../utils/baseUrl";
 import { useSelector } from "react-redux";
 import { isLoading } from "../redux/slicer/authSlice";
 import Loading from "../reusable/Loading";
+import professions from "../utils/professions";
 
 const SearchPage = () => {
     const loading = useSelector(isLoading);
@@ -150,6 +151,7 @@ const Filter = ({ mentors, setMentors, filtered, setFiltered, setOnFilter }) => 
 
                 <Stack
                     direction={{ xs: "column", sm: "row" }}
+                    justifyContent="end"
                     spacing={2}
                     mt={5}
                 >
@@ -168,22 +170,16 @@ const Filter = ({ mentors, setMentors, filtered, setFiltered, setOnFilter }) => 
                                 setOnFilter(false);
                             }
                         }}
+                        
                     >
                         <MenuItem autoFocus={false} divider value="All">
                             All Category
                         </MenuItem>
-                        <MenuItem dense value="Engineering">
-                            Engineering
-                        </MenuItem>
-                        <MenuItem dense value="Information Technology">
-                            Information Technology
-                        </MenuItem>
-                        <MenuItem dense value="Business & Management">
-                            Business & Management
-                        </MenuItem>
-                        <MenuItem dense value="Product & Marketing">
-                            Product & Marketing
-                        </MenuItem>
+                        {professions.map( i => (
+                            <MenuItem key={i} value={i} >
+                                {i}
+                            </MenuItem>
+                        ) )}
                     </TextField>
                 </Stack>
             </Box>

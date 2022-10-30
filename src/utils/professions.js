@@ -3,7 +3,6 @@ module.exports = [
     "Accountant",
     "Accounting technician",
     "Actuary",
-    "Adult nurse",
     "Advertising account executive",
     "Advertising account planner",
     "Advertising copywriter",

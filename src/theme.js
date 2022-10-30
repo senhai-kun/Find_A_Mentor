@@ -18,7 +18,7 @@ let theme = createTheme({
         MuiContainer: {
             styleOverrides: {
                 root: {
-                    minWidth: "300px",
+                    minWidth: "320px",
                 },
             },
         },

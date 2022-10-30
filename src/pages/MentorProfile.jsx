@@ -246,17 +246,9 @@ const MentorProfile = () => {
                             { userLoggedIn ? user?.ismentor ? "Cannot enroll as Mentor" : enrolled ? "Enrolled" : "Enroll as Mentee" : "Login to Apply!" }
                         </Button>
 
-                        {/* <Typography variant="h6" align="center" mt={1}>
-                            Only
-                            <Typography
-                                variant="h6"
-                                fontWeight="bold"
-                                component="span"
-                            >
-                                {" "}
-                                ₱250 /month
-                            </Typography>
-                        </Typography> */}
+                        <Typography variant="h6" align="center" mt={1}>
+                            
+                        </Typography>
                     </Box>
                 </Stack>
             </Container>
@@ -318,9 +310,9 @@ const MentorProfile = () => {
                                     justifyContent="center"
                                 >
                                     {userLoggedIn ? (
-                                        <>
-                                            {mentor.coordinates && <Location userCoordinates={user?.coordinates} mentorCoordinates={mentor?.coordinates} />}
-                                        </>
+                                        <React.Fragment>
+                                            {!user?.ismentor ? <Location userCoordinates={user?.coordinates} mentorCoordinates={mentor?.coordinates} /> : <Typography color="primary" variant="h5" >Log in as mentee to get location.</Typography> }
+                                        </React.Fragment>
                                     ) : (
                                         <Box>
                                             <Typography

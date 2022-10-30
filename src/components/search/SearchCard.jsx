@@ -16,14 +16,23 @@ const SearchCard = ({ fullname, img, profession, rating, isVerified, bookmark, a
                     <Avatar 
                         src={img}
                         alt={fullname}
-                        sx={{ width: 150, height: 170, alignSelf: { xs: 'center', sm: 'start' } }}
+                        sx={{ width: { xs: 150, sm: 190 }, height: { xs: 170, sm: 250 }, alignSelf: { xs: 'center', sm: 'start' }, cursor: "pointer" }}
                         variant='rounded'
-
+                        onClick={ () => navigate(`/mentor/profile/${ref_id}/${fullname.replace(" ", "_")}`)} 
                     />
 
                     <Box width='100%' >
                         <Stack direction='row' spacing={1} >
-                            <Typography variant='h4' fontWeight='bolder' mt={1} textTransform="capitalize" onClick={ () => navigate(`/mentor/profile/${ref_id}/${fullname.replace(" ", "_")}`)} >{fullname}</Typography>
+                            <Typography 
+                                variant='h4' 
+                                fontWeight='bolder' 
+                                mt={1} 
+                                textTransform="capitalize"
+                                sx={{ cursor: "pointer" }}
+                                onClick={ () => navigate(`/mentor/profile/${ref_id}/${fullname.replace(" ", "_")}`)} 
+                            >
+                                {fullname}
+                            </Typography>
                             <VerifiedRoundedIcon sx={{ display: isVerified ? 'block' : 'none' }} fontSize='small' color='primary' />
                         </Stack>
 
