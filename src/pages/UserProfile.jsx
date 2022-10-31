@@ -75,7 +75,7 @@ const UserProfile = () => {
     
     const [from, setFrom] = useState(null);
     const [to, setToEnd] = useState(null);
-    const [open, setOpen] = useState(true);
+    const [open, setOpen] = useState(false);
     const [alertMsg, setAlertMsg] = useState("");
 
     const [loading, setLoading] = useState(true);
@@ -139,7 +139,9 @@ const UserProfile = () => {
             //     return i._id.from === from;
             // })
 
-            // console.log("filter: ", menteeList.filter( i => i._id.email === setTo ).map( i => i.schedule.filter( s => s._id ) ) )
+            console.log("filter: ", menteeList.filter( i => i._id.email === setTo ).map( i => i.schedule.filter( s => s._id ).some( i => {
+                return i._id.schedule.from === from;
+            }) ) )
             
             // if(overlap) {
             //     // alert("Your schedule is overlapped");
@@ -263,7 +265,8 @@ const UserProfile = () => {
 
                         { user?.ismentor ? <MenteeList mentee={menteeList} /> : <MentorList mentor={mentor} />}
                         
-                        {user?.ismentor && <SendEmail user={user} menteeList={menteeList} />}
+                        {/* {user?.ismentor && <SendEmail user={user} menteeList={menteeList} />} */}
+                        {user?.ismentor && <PendingMentees menteeList={menteeList} /> }
                     </Stack>
                     
                 </Container>
@@ -294,6 +297,56 @@ const UserProfile = () => {
         </React.Fragment>
     );
 };
+
+const PendingMentees = ({ menteeList }) => {
+    console.log("pending: ", menteeList);
+    const [pendingList, setPendingList] = useState(menteeList)
+
+    // filter pending mentee
+    useEffect( () => {
+        let filtered = menteeList?.filter( i => !i.status.accepted );
+        setPendingList(filtered);
+
+    }, [menteeList])
+
+    return (
+        <React.Fragment>
+            <Section title="Pending Mentee" subtitle="Enrolling Requests" >
+                { pendingList.length === 0 ? 
+                <Typography variant="h5" align="center" >"No Pending Requests..." </Typography>
+                : 
+                (<Stack direction="column" gap={3} textAlign="center" >
+                    { pendingList?.map( i => (
+                        <Paper sx={{ textAlign: "center", p: 1,pl: 2, pr: 2, borderRadius: 2 }} key={i._id._id} >
+                            <Stack direction="row" justifyContent="center" pb={2} >
+                                <Avatar 
+                                    src={i._id.img}
+                                    alt={i._id.firstname}
+                                    sx={{ width: 70, height: 70 }}
+                                />
+                            </Stack>  
+                            <Box>
+                                <Typography>{i._id.firstname} {i._id.lastname}</Typography>
+                                <Typography>{i._id.email}</Typography>
+                                <Typography>{i._id.coordinates.address}</Typography>
+
+                                <Typography>{i.status.message}</Typography>
+
+                                <Box textAlign="right">
+                                    <Button>Accept</Button>
+
+                                </Box>
+                            </Box>
+                        </Paper>
+                    ) )}
+                </Stack>)
+            }
+            </Section>
+        </React.Fragment>
+    )
+}
+
+
 const SendEmail = ({ user, menteeList }) => {
     const [sendTo, setSendTo] = useState([]);
     const [msg, setMsg] = useState("");
@@ -625,7 +678,7 @@ const MentorAppointment = ({ appointment }) => {
                         {sched?._id?.approved && moment(sched?._id?.to).isBefore() && 
                         <Box sx={{ pt: 2 }}>
                             <Typography>
-                                Status: { sched?._id?.rating?.rated ? "Rated" : "Pending" }
+                                Rating Status: { sched?._id?.rating?.rated ? "Rated" : "Pending" }
                             </Typography>
                         </Box>}
 

@@ -11,6 +11,7 @@ import {
     DialogContentText,
     DialogTitle,
     Stack,
+    TextField,
     Typography,
 } from "@mui/material";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
@@ -49,11 +50,12 @@ const Details = ({ icon, label, variant }) => {
 };
 
 const EnrollModal = ({ open, close, ref_id, mentor  }) => {
-
+    const [message, setMessage] = useState("")
     const handleEnroll = async () => {
         try {
             const res = await axios.post(`${baseUrl}/mentee/enroll`, {
-                ref_id
+                ref_id,
+                message
             },
             {
                 headers: {
@@ -83,6 +85,17 @@ const EnrollModal = ({ open, close, ref_id, mentor  }) => {
                     <DialogContentText>
                         By Enrolling as <Typography component="span" textTransform="capitalize" color="inherit">{mentor.firstname}'s</Typography> Mentee you must agree to their terms and agreement.
                     </DialogContentText>
+
+                    <Box mt={2} >
+                        <TextField 
+                            multiline
+                            minRows={5}
+                            fullWidth
+                            placeholder="Write a message to your future mentor..."
+                            value={message}
+                            onChange={ e => setMessage(e.target.value)}
+                        />
+                    </Box>
                 </DialogContent>
                 <DialogActions>
                     <Button variant="outlined" color="inherit" autoFocus onClick={close}>
