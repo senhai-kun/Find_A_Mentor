@@ -224,7 +224,7 @@ const GettingStarted = () => {
                         value={about}
                         onChange={handleChange}
                         color="info"
-                        placeholder="Write about yourself in less than 100words to impress your mentees..."
+                        placeholder="Write about yourself in more than 100words to impress your mentees..."
                         required
                         sx={{ whiteSpace: "pre-wrap" }}
                     />
