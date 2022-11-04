@@ -10,9 +10,9 @@ import L from "leaflet";
 import { Box } from '@mui/material';
 import axios from "axios";
 
-const SettingLocation = ({ location, setLocation }) => {
+const SettingLocation = ({ defaultAddress, location, setLocation }) => {
     const [map, setMap] = useState(null);
-    const [address, setAddress] = useState("");
+    const [address, setAddress] = useState(defaultAddress);
 
     const MyMap = () => {
 

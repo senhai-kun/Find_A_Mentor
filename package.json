@@ -23,6 +23,7 @@
     "leaflet": "^1.7.1",
     "leaflet-routing-machine": "^3.2.12",
     "moment": "^2.29.4",
+    "mui-tel-input": "^2.0.4",
     "react": "^17.0.2",
     "react-calendar": "^3.7.0",
     "react-dom": "^17.0.2",
@@ -33,7 +34,8 @@
     "react-scripts": "5.0.0",
     "socket.io-client": "^4.5.2",
     "web-vitals": "^2.1.4",
-    "yup": "^0.32.11"
+    "yup": "^0.32.11",
+    "yup-phone-lite": "^1.1.2"
   },
   "scripts": {
     "start": "react-scripts start",

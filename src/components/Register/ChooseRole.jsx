@@ -3,10 +3,20 @@ import { Avatar, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle,
 import { useFormikContext } from "formik";
 import mentee from "../../asset/mentee.jpg";
 import mentor from '../../asset/mentor.jpg';
+import axios from "axios";
+import baseUrl from "../../utils/baseUrl";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { registerUser } from "../../redux/slicer/authSlice";
+import LoadingButton from "@mui/lab/LoadingButton";
 
-const ChooseRole = ({ open, close, submit, setIsMentor }) => {
+const ChooseRole = ({ open, close, submit, setIsMentor, setError, setErrorMsg }) => {
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+
     const [ select, setSelect ] = useState("");
-    const { submitForm } = useFormikContext();
+    const [ loading, setLoading ] = useState(false);
+    const { submitForm, values, setFieldError } = useFormikContext();
 
     const handleClose = () => {
         setSelect("")
@@ -22,10 +32,32 @@ const ChooseRole = ({ open, close, submit, setIsMentor }) => {
         setSelect("mentor");
     }
 
-    const save = () => {
+    const save = async () => {
         setIsMentor( select === "mentee" ? false : true);
-        close(false);
-        submitForm()
+        // close(false);
+        // submitForm()
+        setLoading(true)
+        try {
+            const fetch = await axios.post(
+                `${baseUrl}/account/register`,
+                { ...values, ismentor: select === "mentor" ? true : false },
+                {
+                    withCredentials: true,
+                }
+            );
+
+            dispatch(registerUser({ navigate, data: fetch.data }));
+            
+        } catch (err) {
+            close(false);
+            console.log(err.response.data);
+            setErrorMsg(err.response.data.email);
+            setError(true)
+            setFieldError(err.response.data.param, err.response.data.errorMsg);
+        } finally {
+            submit(false)
+            setLoading(false);
+        }
     }
 
     return (
@@ -81,7 +113,7 @@ const ChooseRole = ({ open, close, submit, setIsMentor }) => {
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose} color="inherit">Close</Button>
-                <Button onClick={save} type="submit" variant="contained" color={ select === "mentee" ? "success" : "primary" } disabled={select === "" && true} >Select</Button>
+                <LoadingButton loading={loading} onClick={save} type="submit" variant="contained" color={ select === "mentee" ? "success" : "primary" } disabled={select === "" && true} >Select</LoadingButton>
             </DialogActions>
         </Dialog>
     )

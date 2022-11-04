@@ -127,7 +127,7 @@ export const registerUser = ({ navigate, data }) => (dispatch) => {
         if ( data.ismentor ) {
             navigate("/getting_started");
         } else {
-            navigate("/search");
+            navigate("/account/settings");
         }
     };
 

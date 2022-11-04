@@ -11,20 +11,22 @@ import {
     Divider,
     Paper,
     InputAdornment,
-    Checkbox,
-    MenuItem,
     Chip,
     useMediaQuery,
     Autocomplete,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Snackbar,
+    Alert,
 } from "@mui/material";
 import InsertPhotoOutlinedIcon from "@mui/icons-material/InsertPhotoOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import AppbarSpace from "../reusable/AppbarSpace";
 import { useDispatch, useSelector } from "react-redux";
 import {
-    loadComponent,
     setUser,
-    updateProfile,
     userData,
 } from "../redux/slicer/userSlice";
 import LoadingButton from "@mui/lab/LoadingButton";
@@ -36,6 +38,8 @@ import baseUrl from "../utils/baseUrl";
 import Location from "../components/map/Location";
 import SettingLocation from "../components/map/SettingLocation";
 import professions from "../utils/professions";
+import { useFormik } from "formik";
+import * as yup from "yup";
 
 const Input = styled("input")({
     display: "none",
@@ -46,7 +50,8 @@ const Settings = () => {
     const dispatch = useDispatch();
     const user = useSelector(userData);
     // const loading = useSelector(loadComponent);
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false);
+    const [openChangePass, setOpenChangePass] = useState(false);
 
     const [profileImage, setProfileImage] = useState(null);
     const [firstname, setFirstname] = useState("");
@@ -58,6 +63,8 @@ const Settings = () => {
             return { lat: 15.487104640287109, lng: 120.9642791748047 }
         }
     });
+    const [phone, setPhone] = useState("");
+    const [birthday, setBirthday] = useState("")
 
     useEffect(() => {
         setProfileImage(user?.img);
@@ -66,7 +73,8 @@ const Settings = () => {
         // }
         setFirstname(user?.firstname);
         setLastname(user?.lastname);
-        
+        setPhone(user?.phone);
+        setBirthday(user?.birthday);
     }, [user]);
 
     const previewImg = (e) => {
@@ -79,14 +87,15 @@ const Settings = () => {
 
         reader.readAsDataURL(e.target.files[0]);
     };
-    console.log(location)
 
-    const uploadImg = async () => {
+    const saveProfile = async (e) => {
+        e.preventDefault();
+        console.log("save");
         setLoading(true)
         try {
             const result = await axios.post(
                 `${baseUrl}/account/update_profile`,
-                { ismentor: user?.ismentor, img: profileImage, firstname, lastname, location, ref_id: user?.ref_id },
+                { ismentor: user?.ismentor, img: profileImage, firstname, lastname, location, ref_id: user?.ref_id, phone, birthday },
                 {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem(
@@ -107,7 +116,7 @@ const Settings = () => {
 
         }
         // if (user.img !== profileImage) {
-            // dispatch(updateProfile({ img: profileImage, ismentor: user?.ismentor, ref_id: user?.ref_id, firstname, lastname, location}));
+        //     dispatch(updateProfile({ img: profileImage, ismentor: user?.ismentor, ref_id: user?.ref_id, firstname, lastname, location}));
         // }
     };
 
@@ -116,8 +125,8 @@ const Settings = () => {
             <Header title="Settings - Account" />
             <AppbarSpace color="#f2f4fb" />
 
-            <Box bgcolor="#f2f4fb" pb={10}>
-                <Container sx={{ pt: { xs: 5, sm: 10 } }}>
+            <Box bgcolor="#f2f4fb" pb={10} component="form" onSubmit={saveProfile}>
+                <Container sx={{ pt: { xs: 5, sm: 8 } }}>
                     <Typography variant="h4" fontWeight="bold">
                         Personal Info
                     </Typography>
@@ -181,6 +190,46 @@ const Settings = () => {
                                     }}
                                 />
                             </Box>
+                            
+                            <Stack direction="row" gap={2} alignItems="end" justifyContent="space-between" flexWrap="wrap" >
+                                <Box mt={2}>
+                                    <Typography fontWeight={300}>Phone Number</Typography>
+                                    <TextField
+                                        placeholder="0999 123 2341"
+                                        size="small"
+                                        type="number"
+                                        value={phone}
+                                        onChange={ e => setPhone(e.target.value) }
+                                        InputProps={{
+                                            startAdornment: (
+                                                <InputAdornment position="start">
+                                                    +63
+                                                </InputAdornment>
+                                            ),
+                                        }}
+                                        inputProps={{
+                                            inputMode: "numeric",
+                                            maxLength: 11,
+                                        }}
+                                        required
+                                    />
+                                </Box>
+                                <Box mt={2}>
+                                    <Typography fontWeight={300}>Birthday</Typography>
+                                    <TextField
+                                        type="date"
+                                        value={birthday}
+                                        onChange={ (e) => {
+                                            setBirthday(e.target.value);
+                                        }}
+                                        size="small"
+                                    />
+                                </Box>
+                                <Box mt={2} textAlign="right" >
+                                    <Button variant="contained" color="info" onClick={ () => setOpenChangePass(true) } >Change Password</Button>
+                                </Box>
+                            </Stack>
+                            
                         </Box>
 
                         <ProfileImage
@@ -189,7 +238,7 @@ const Settings = () => {
                             previewImg={previewImg}
                         />
 
-                        <LocationSettings location={location} setLocation={setLocation} />
+                        <LocationSettings user={user} location={location} setLocation={setLocation} />
 
                         <Divider sx={{ pb: 3 }} />
 
@@ -197,7 +246,8 @@ const Settings = () => {
                             <LoadingButton
                                 fullWidth
                                 variant="contained"
-                                onClick={uploadImg}
+                                // onClick={saveProfile}
+                                type="submit"
                                 loading={loading}
                             >
                                 {loading ? "loading" : "Save"}
@@ -215,11 +265,166 @@ const Settings = () => {
 
                 </Container>
             </Box>
+            
+            <ChangePassword open={openChangePass} toggle={setOpenChangePass} />
         </React.Fragment>
     );
 };
 
-const LocationSettings = ({ location, setLocation }) => {
+const ChangePassword = ({ open, toggle }) => {
+    const [loading, setLoading] = useState(false);
+    const [openAlert, setOpenAlert] = useState(false);
+
+    const validation = yup.object({
+        currentPassword: yup
+            .string("Enter your password")
+            .min(3, "Password should be of minimum 3 characters length")
+            .required("Password is required")
+            .matches(/^\S*$/, "Spaces are not valid"),
+        newPassword: yup
+            .string("Enter your password")
+            .min(3, "Password should be of minimum 3 characters length")
+            .required("Password is required")
+            .matches(/^\S*$/, "Spaces are not valid")
+            .notOneOf([yup.ref("currentPassword")], "New Password must not match the old password"),
+        confirmNewPassword: yup
+            .string("Enter your password")
+            .min(3, "Password should be of minimum 3 characters length")
+            .oneOf([yup.ref("newPassword")], "New Password not matched!")
+            .required("Enter again your new password to confirm")
+    })
+
+    const formik = useFormik({
+        initialValues: {
+            currentPassword: "",
+            newPassword: "",
+            confirmNewPassword: ""
+        },
+        validationSchema: validation,
+        onSubmit: async (val, { setFieldError, resetForm }) => {
+            setLoading(true);
+            try {
+                const res = await axios.post(
+                    `${baseUrl}/account/change_password`, { ...val },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem("fam-id")}`,
+                        },
+                        withCredentials: true,
+                    }
+                );
+                if ( !res.data.success ) { // there was a field error
+                    setFieldError(res.data.params, res.data.errorMsg); 
+                } else {
+                    // all done here!
+                    setOpenAlert(true);
+                    handleClose(); // close dialog
+                    resetForm();
+                }
+                
+            } catch (error) {
+                alert(`Please refresh the page. There was an error: ${error}`)
+            } finally {
+                setLoading(false)
+            }
+        }
+    })
+
+    const handleClose = () => {
+        toggle(false);
+    }
+
+    return (
+        <React.Fragment>
+            <Dialog
+                open={open}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                fullWidth
+                component="form"
+                onSubmit={formik.handleSubmit}
+            >
+                <DialogTitle id="alert-dialog-title">
+                    Change Password
+                </DialogTitle>
+                <DialogContent dividers >
+                    <TextField 
+                        label="Current Password"
+                        variant="outlined"
+                        fullWidth
+                        name="currentPassword"
+                        type="password"
+                        sx={{ mt: 2 }}
+                        value={formik.values.currentPassword}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        error={
+                            formik.touched.currentPassword &&
+                            Boolean(formik.errors.currentPassword)
+                        }
+                        helperText={
+                            formik.touched.currentPassword &&
+                            formik.errors.currentPassword
+                        }
+                    />
+
+                    <TextField 
+                        label="Enter New Password"
+                        variant="outlined"
+                        fullWidth
+                        type="password"
+                        name="newPassword"
+                        sx={{ mt: 5 }}
+                        value={formik.values.newPassword}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        error={
+                            formik.touched.newPassword &&
+                            Boolean(formik.errors.newPassword)
+                        }
+                        helperText={
+                            formik.touched.newPassword &&
+                            formik.errors.newPassword
+                        }
+                    />
+                    <TextField 
+                        label="Confirm New Password"
+                        variant="outlined"
+                        fullWidth
+                        type="password"
+                        name="confirmNewPassword"
+                        sx={{ mt: 2 }}
+                        value={formik.values.confirmNewPassword}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        error={
+                            formik.touched.confirmNewPassword &&
+                            Boolean(formik.errors.confirmNewPassword)
+                        }
+                        helperText={
+                            formik.touched.confirmNewPassword &&
+                            formik.errors.confirmNewPassword
+                        }
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose} color="inherit" >Close</Button>
+                    <LoadingButton loading={loading} type="submit" variant="contained" >
+                        Submit
+                    </LoadingButton>
+                </DialogActions>
+            </Dialog>
+            
+            <Snackbar open={openAlert} autoHideDuration={10000} onClose={() => setOpenAlert(false)} anchorOrigin={{ vertical: "top", horizontal: "center" }} >
+                <Alert variant="filled" onClose={() => setOpenAlert(false)} severity="success" sx={{ width: '100%' }}>
+                    Your Password has been changed!
+                </Alert>
+            </Snackbar>
+        </React.Fragment>
+    )
+}
+
+const LocationSettings = ({ user, location, setLocation }) => {
 
     return (
         <React.Fragment>
@@ -227,7 +432,7 @@ const LocationSettings = ({ location, setLocation }) => {
                 Location
             </Typography>
 
-            <SettingLocation location={location} setLocation={setLocation} />
+            <SettingLocation defaultAddress={user?.coordinates?.address} location={location} setLocation={setLocation} />
 
         </React.Fragment>
     )

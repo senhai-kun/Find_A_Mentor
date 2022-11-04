@@ -22,6 +22,7 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import VerifiedIcon from "@mui/icons-material/Verified";
+import SmartphoneRoundedIcon from '@mui/icons-material/SmartphoneRounded';
 import Footer from "../components/Footer";
 import Location from "../components/map/Location";
 import AppbarSpace from "../reusable/AppbarSpace";
@@ -43,7 +44,7 @@ const Details = ({ icon, label, variant }) => {
                 onClick={() => console.log("asd")}
                 variant="outlined"
                 color="primary"
-                sx={{ border: "none" }}
+                sx={{ border: "none", fontSize: 15 }}
             />
         </Stack>
     );
@@ -241,6 +242,10 @@ const MentorProfile = () => {
                                         icon={
                                             <MailOutlineOutlinedIcon color="info" />
                                         }
+                                    />
+                                    <Details 
+                                        label={mentor?.phone}
+                                        icon={<SmartphoneRoundedIcon color="info" />}
                                     />
                                 </Stack>
                             </Stack>

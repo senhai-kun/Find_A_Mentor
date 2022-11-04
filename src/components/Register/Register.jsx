@@ -23,9 +23,11 @@ import { useNavigate } from "react-router-dom";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
 import LoadingButton from "@mui/lab/LoadingButton";
+import PhoneIphoneRoundedIcon from '@mui/icons-material/PhoneIphoneRounded';
 import axios from "axios";
 import { Formik } from "formik";
 import * as yup from "yup";
+import "yup-phone-lite";
 import { useDispatch } from "react-redux";
 import { login, registerUser } from "../../redux/slicer/authSlice";
 import baseUrl from "../../utils/baseUrl";
@@ -41,19 +43,26 @@ const outlineColor = "#c45a04"
 const validationSchema = yup.object({
     firstname: yup
         .string("Enter a valid name")
-        .min(2, "Name must be ")
+        .min(2, "Name must be 3 characters")
         .max(20, "Must be 20 characters or less")
         .required("Firstname must not be empty")
-        .matches(/^[^\s].+[a-zA-Z]+[a-zA-Z]+$/, "This name is not valid."),
+        .matches(/^[^\s].+[a-zA-Z]+$/, "This name is not valid."),
     lastname: yup
         .string("Enter a valid surname")
         .max(20, "Must be 20 characters or less")
         .required("Lastname must not be empty")
-        .matches(/^[^\s].+[a-zA-Z]+[a-zA-Z]+$/, "This name is not valid."),
+        .matches(/^[^\s].+[a-zA-Z]+$/, "This name is not valid."),
     email: yup
         .string("Enter your email")
         .email("Enter a valid email")
         .required("Email is required"),
+    phone: yup
+        .string()
+        .phone("PH", "Must be a Philippine Number")
+        .required("Phone number is required"),
+    birthday: yup
+        .string()
+        .required("Birthday must not be empty"),
     password: yup
         .string("Enter your password")
         .min(3, "Password should be of minimum 3 characters length")
@@ -76,6 +85,7 @@ const Input = ({
     helperText,
     capitalized,
     name,
+    maxLength
 }) => {
     return (
         <TextField
@@ -98,11 +108,13 @@ const Input = ({
             }}
             inputProps={{
                 style: { textTransform: capitalized && "capitalize" },
+                maxLength: maxLength 
             }}
             variant="outlined"
             focused
             fullWidth
             color="warning"
+            
             // required
         />
     );
@@ -110,7 +122,6 @@ const Input = ({
 
 
 const Register = () => {
-
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [isMentor, setIsMentor] = useState(false);
@@ -126,40 +137,45 @@ const Register = () => {
                     firstname: "",
                     lastname: "",
                     email: "",
+                    phone: "",
+                    birthday: "",
                     password: "",
                     confirmPassword: "",
                 }}
                 validationSchema={validationSchema}
                 onSubmit = {async (e, { setFieldError }) => {
-                    setSubmit(true);
-                    try {
-                        const fetch = await axios.post(
-                            `${baseUrl}/account/register`,
-                            { ...e, ismentor: isMentor },
-                            {
-                                withCredentials: true,
-                            }
-                        );
+                    console.log("submit form");
+                    setSubmit(true)
+                    setOpenRole(true)
+                    // setSubmit(true);
+                    // try {
+                    //     const fetch = await axios.post(
+                    //         `${baseUrl}/account/register`,
+                    //         { ...e, ismentor: isMentor },
+                    //         {
+                    //             withCredentials: true,
+                    //         }
+                    //     );
 
-                        console.log("login from register: ", fetch.data)
-                        dispatch(registerUser({ navigate, data: fetch.data }));
+                    //     console.log("login from register: ", fetch.data)
+                    //     dispatch(registerUser({ navigate, data: fetch.data }));
                         
-                    } catch (err) {
-                        // dispatch(login(e.response.data.success));
-                        console.log(err.response.data);
-                        setErrorMsg(err.response.data.email);
-                        setError(true)
-                        setFieldError(err.response.data.param, err.response.data.errorMsg);
-                    } finally {
-                        setSubmit(false);
-                    }
+                    // } catch (err) {
+                    //     // dispatch(login(e.response.data.success));
+                    //     console.log(err.response.data);
+                    //     setErrorMsg(err.response.data.email);
+                    //     setError(true)
+                    //     setFieldError(err.response.data.param, err.response.data.errorMsg);
+                    // } finally {
+                    //     setSubmit(false);
+                    // }
                 }}
 
             >
 
                 { (formik) => (
                     <Box
-                        component="form"s
+                        component="form"
                         onSubmit={formik.handleSubmit}
                         width={{ xs: "80%", sm: "70%", md: "80%", lg: "70%" }}
                         m="auto"
@@ -254,6 +270,35 @@ const Register = () => {
                                 helperText={formik.touched.email && formik.errors.email}
                             />
 
+                            <Stack direction={{ xs: "column", md: "row" }} spacing={2} >
+                                <Input
+                                    placeholder="Phone Number"
+                                    name="phone"
+                                    type="tel"
+                                    icon={
+                                        <PhoneIphoneRoundedIcon sx={{ color: outlineColor }} />
+                                    }
+                                    value={formik.values.phone}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    error={
+                                        formik.touched.phone && Boolean(formik.errors.phone)
+                                    }
+                                    helperText={formik.touched.phone && formik.errors.phone}
+                                />
+                                <Input
+                                    name="birthday"
+                                    type="date"
+                                    value={formik.values.birthday}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    error={
+                                        formik.touched.birthday && Boolean(formik.errors.birthday)
+                                    }
+                                    helperText={formik.touched.birthday && formik.errors.birthday}
+                                />
+                            </Stack>
+
                             <Input
                                 placeholder="Password"
                                 name="password"
@@ -311,7 +356,28 @@ const Register = () => {
                             size="large"
                             color="warning"
                             sx={{ mt: 3 }}
-                            onClick={ () => formik.isValid && setOpenRole(true)}
+                            // onClick={ () => formik.validateField("firstname")}
+                            // onClick={ async () => {
+                            //     // touch all fields
+                            //     await formik.setTouched({
+                            //         firstname: true,
+                            //         lastname: true,
+                            //         email: true,
+                            //         phone: true,
+                            //         birthday: true,
+                            //         password: true,
+                            //         confirmPassword: true
+                            //     })
+                            //     await formik.validateForm()
+                            //     if(!formik.isValid) {
+                            //         console.log("theres an error")
+                            //     } else {
+                            //         console.log("no error")
+                            //     }
+                            //     console.log("errors", formik.errors)
+                            //     console.log("valid?: ", Object.keys(formik.errors).length)
+                            // }}
+                            type="submit"
                             loading={submit}
                         >
                             Register
@@ -336,7 +402,7 @@ const Register = () => {
                         </Button>
                         
                         <Suspense  fallback={<div>Loading...</div>}>
-                            <ChooseRole open={openRole} close={setOpenRole} submit={setSubmit} setIsMentor={setIsMentor} />
+                            <ChooseRole open={openRole} close={setOpenRole} submit={setSubmit} setIsMentor={setIsMentor} setError={setError} setErrorMsg={setErrorMsg} />
                         </Suspense>
 
                     </Box>

@@ -15,6 +15,7 @@ import Chat from "./Chat";
 import { useSelector } from "react-redux";
 import { userData } from "../redux/slicer/userSlice";
 import { isLoading, isLoggedIn } from "../redux/slicer/authSlice";
+import ResetPassword from "./ResetPassword";
 
 const Pages = () => {
     const user = useSelector(userData);
@@ -25,22 +26,21 @@ const Pages = () => {
     const navigate = useNavigate();
 
     useEffect( () => {
-        console.log(user)
         if( !loading ) {
             if( loggedIn && user ) {
-                if ( user.ismentor ) {
-                    if(user.details.skills.length === 0 ) {
+                if ( user?.ismentor ) {
+                    if(user?.details?.skills?.length === 0 ) {
                         navigate("/getting_started", { replace: true });
                     }
                 }
             }
         }
-    }, [user, loading]);
+    }, [user, loading, loggedIn, navigate]);
 
     return (
         <React.Fragment>
             {pathname !== "/account/login" &&
-                pathname !== "/account/register" && pathname !== "/getting_started" && <Header />}
+                pathname !== "/account/register" && pathname !== "/account/reset" && pathname !== "/getting_started" && <Header />}
 
             <Routes>
                 <Route path="/" element={<LandingPage />} />
@@ -69,13 +69,13 @@ const Pages = () => {
                 <Route path="/account/login" element={<LoginContainer />} />
                 <Route path="/account/register" element={<LoginContainer />} />
                 <Route path="/chat/:user" element={<Chat />} />
-
+                <Route path="/account/reset" element={<ResetPassword />} />
+                
                 <Route path="*" element={<NotFound />} />
             </Routes>
         </React.Fragment>
     );
 };
-
 
 
 export default Pages;

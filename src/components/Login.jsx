@@ -7,7 +7,11 @@ import {
     Typography,
     InputAdornment,
     Divider,
-    Checkbox,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogContentText,
+    DialogActions,
 } from "@mui/material";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import KeyOutlinedIcon from "@mui/icons-material/KeyOutlined";
@@ -41,6 +45,7 @@ const Login = () => {
     const location = useLocation();
 
     const [submit, setSubmit] = useState(false);
+    const [open, setOpen] = useState(false);
 
     const formik = useFormik({
         initialValues: {
@@ -93,7 +98,7 @@ const Login = () => {
                     mb={5}
                     variant="body1"
                 >
-                    Welcome Back! Please enter your details.
+                    Welcome Back! Please enter your account credentials.
                 </Typography>
 
                 <Stack direction="column" spacing={3} width="100%" mt={2}>
@@ -175,17 +180,15 @@ const Login = () => {
                         // required
                     />
                 </Stack>
-
-                <Stack direction="row" alignItems="center" mb={3}>
-                    <Checkbox color="primary" />
-                    <Typography color={textColorPri}>Remember me</Typography>
-                </Stack>
+                <Box sx={{ textAlign: "right", mt: 2 }} >
+                    <Button onClick={ () => setOpen(true) } >Forgot Password</Button>
+                </Box>
 
                 <LoadingButton
                     variant="contained"
                     fullWidth
                     size="large"
-                    sx={{ mt: 3 }}
+                    sx={{ mt: 5 }}
                     type="submit"
                     loading={submit}
                 >
@@ -208,9 +211,75 @@ const Login = () => {
                 >
                     Register
                 </Button>
+
             </Box>
+
+            <ForgotPassword open={open} setOpen={setOpen} />
         </Box>
     );
 };
+
+const ForgotPassword = ({ open, setOpen }) => {
+    const [email, setEmail] = useState("");
+    const [loading, setLoading] = useState(false)
+
+    const handleClose = () => {
+        setOpen(false);
+    }
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        console.log("forgot: ",email);
+        setLoading(true)
+        try {
+            
+            const res = await axios.post(`${baseUrl}/account/reset/url`, { email });
+
+            alert(`${res.data.msg}`);
+            setOpen(false);
+        } catch (error) {
+            alert(`Please refresh the page. There was an error: ${error}`)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    return (
+        <Dialog
+            open={open}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+            component="form"
+            onSubmit={handleSubmit}
+        >
+            <DialogTitle id="alert-dialog-title">
+                Forgot Password?
+            </DialogTitle>
+            <DialogContent dividers>
+                <DialogContentText id="alert-dialog-description">
+                    You will receive an email after you submit your email address associated with your account.
+                </DialogContentText>
+                <TextField 
+                    sx={{ mt: 2 }}
+                    size="small"
+                    fullWidth
+                    placeholder="sampleonly@domain.com"
+                    required
+                    name="email"
+                    type="email"
+                    value={email}
+                    onChange={ (e) => setEmail(e.target.value) }
+                />
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={handleClose} color="inherit" >close</Button>
+                <LoadingButton loading={loading} variant="contained" type="submit">
+                    Submit
+                </LoadingButton>
+            </DialogActions>
+        </Dialog>
+    )
+}
 
 export default Login;

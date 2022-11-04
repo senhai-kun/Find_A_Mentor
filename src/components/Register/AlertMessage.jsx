@@ -35,8 +35,8 @@ const AlertMessage = ({ open, close, errorMsg, setErrorMsg }) => {
 
             <WarningRoundedIcon color="warning" sx={{ fontSize: 70 }} />
 
-            <Typography variant="h4" fontWeight="300" pb={2}>There was an Error!</Typography>
-            <Typography fontSize={20} fontWeight="300" pb={3}>{errorMsg}</Typography>
+            <Typography variant="h5"  fontWeight="300" pb={2}>There was an Error!</Typography>
+            <Typography variant="h4" fontWeight="500" pb={3}>{errorMsg}</Typography>
 
             </DialogContent>
             <DialogActions sx={{ bgcolor: (theme) => theme.palette.warning.main }} >

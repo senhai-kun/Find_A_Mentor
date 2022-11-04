@@ -5,7 +5,6 @@ import {
     Button,
     Chip,
     Container,
-    MenuItem,
     Stack,
     TextField,
     Typography,
@@ -47,7 +46,7 @@ const GettingStarted = () => {
     useEffect( () => {
         console.log(user)
         if( !loading ) {
-            if( user.ismentor && user.details.skills.length !== 0 ) {
+            if( user?.ismentor && user?.details?.skills?.length !== 0 ) {
                 navigate("/search", { replace: true });
 
             }

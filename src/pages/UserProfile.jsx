@@ -48,6 +48,8 @@ import { useNavigate } from "react-router-dom";
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import Loading from "../reusable/Loading";
 import Message from "../reusable/Message";
+import ScheduleIcon from '@mui/icons-material/Schedule';
+import CalendarMonth from '@mui/icons-material/CalendarToday';
 
 const Details = ({ icon, label, variant, size }) => {
     return (
@@ -66,8 +68,9 @@ const UserProfile = () => {
     const user = useSelector(userData);
     const navigate = useNavigate();
     const [date, setDate] = useState(null);
-    const [mentor, setMentor] = useState([])
+    const [mentor, setMentor] = useState([]);
     const [menteeList, setMenteeList] = useState([]);
+    const [pendingList, setPendingList] = useState([])
     const [scheduleList, setScheduleList] = useState([]);
     const [setTo, setSetTo] = useState('');
     const [appointments, setAppointments] = useState([]);
@@ -97,15 +100,18 @@ const UserProfile = () => {
                 // console.log("user prof: ", user_profile.data.mentor.mentee);
 
                 if( user_profile.data.ismentor ) {
-                    setMenteeList(user_profile.data.mentor.mentee);
-                    setAppointments(user_profile.data.mentor.mentee.filter( i => i.schedule.length !== 0 ) );
+                    // console.log("filter accepted: ", user_profile.data.mentor.mentee.filter( i => i.status.mode === "pending"));
+                    setMenteeList(user_profile.data.mentor.mentee.filter( i => i.status.mode === "accepted"));
+                    setPendingList(user_profile.data.mentor.mentee.filter( i => i.status.mode === "pending"))
+                    setAppointments(user_profile.data.mentor.mentee.filter( i => i.schedule.length !== 0 && i.status.mode === "accepted") );
                     setScheduleList(user_profile.data.mentor.mentee.map( i => i.schedule.filter( s => s._id ) ).flat())
                 } else {
                     // mentee profile dashboard
+                    // console.log("mentor: ", user_profile.data.mentee.map( i => ({ ...i, mentee: i.mentee.filter( data => data. )})))
                     // console.log("get: ", user_profile.data.mentee.map( i => ({ ...i, mentee: i.mentee.filter( data => data._id.ref_id === user.ref_id ) }) ).sort( (a,b) => Number(a.map( mentee => mentee.map( sched => sched.map( i => i._id.approved ) ) )) - Number(b.map( mentee => mentee.map( sched => sched.map( i => i._id.approved ) ) )) ) );
                     setMentor(user_profile.data.mentee);
-                    setAppointments(user_profile.data.mentee.map( i => ({ ...i, mentee: i.mentee.filter( data => data._id.ref_id === user.ref_id ) }) ));
-                    setMenteeSched(user_profile.data.mentee.map( i => ({ ...i, mentee: i.mentee.filter( data => data._id.ref_id === user.ref_id ).map( a => ({ ...a, schedule: a.schedule.filter( sched => sched._id.approved === false ) })) }) ));
+                    setAppointments(user_profile.data.mentee.map( i => ({ ...i, mentee: i.mentee.filter( data => data._id.ref_id === user.ref_id && data.status.mode === "accepted" ) }) ));
+                    setMenteeSched(user_profile.data.mentee.map( i => ({ ...i, mentee: i.mentee.filter( data => data._id.ref_id === user.ref_id && data.status.mode === "accepted" ).map( a => ({ ...a, schedule: a.schedule.filter( sched => sched._id.approved === false ) })) }) ));
                 }
             } catch (error) {
                 console.log(error);
@@ -118,16 +124,17 @@ const UserProfile = () => {
         getUser();
         
         return () => {
-            source.cancel();
+            source.cancel("getting info cancelled");
         }
     }, [user])
 
-    console.log("appoi: ",appointments );
-    console.log("mentee sched: ",menteeSched )
-    console.log("get sched only: ", menteeList.map( i => i.schedule.filter( s => s._id ) ).flat() );
+    // console.log("appoi: ",appointments );
+    // console.log("mentee sched: ",menteeSched )
+    // console.log("get sched only: ", menteeList.map( i => i.schedule.filter( s => s._id ) ).flat() );
 
     const handleMentorSchedule = async () => {
 
+        // handle schedule over
         if( setTo !== "" && from !== null && to !== null ) { // if all have values
 
             // if( from === to ) { // check if the datetime is the same
@@ -138,16 +145,24 @@ const UserProfile = () => {
             // let overlap = scheduleList.some( i => { 
             //     return i._id.from === from;
             // })
+            console.log("map: ", menteeList );
+            if ( menteeList.map( i => i.schedule.map( s => s._id ).some( i => {
+                return moment(from).isBetween(moment(i.from),moment(i.to)) ;
+            }) )[0] ) {
+                console.log("Schedule overlapped!");    
+                setOpen(true)
 
-            console.log("filter: ", menteeList.filter( i => i._id.email === setTo ).map( i => i.schedule.filter( s => s._id ).some( i => {
-                return i._id.schedule.from === from;
-            }) ) )
+            } else {
+                console.log("Schedule not overlapped!", menteeList);
+                await saveSchedule();
+
+                // await saveSchedule();
+            }
             
             // if(overlap) {
             //     // alert("Your schedule is overlapped");
                 // setOpen(true)
             // }
-            await saveSchedule();
         }
 
     }
@@ -263,10 +278,10 @@ const UserProfile = () => {
                         }
                     >
 
-                        { user?.ismentor ? <MenteeList mentee={menteeList} /> : <MentorList mentor={mentor} />}
+                        { user?.ismentor ? <MenteeList mentee={menteeList} /> : <MentorList mentor={mentor} user={user} />}
                         
                         {/* {user?.ismentor && <SendEmail user={user} menteeList={menteeList} />} */}
-                        {user?.ismentor && <PendingMentees menteeList={menteeList} /> }
+                        { user?.ismentor ? <PendingMentees pendingList={pendingList} /> : <AppliedMentors mentor={mentor} user={user} /> }
                     </Stack>
                     
                 </Container>
@@ -277,20 +292,19 @@ const UserProfile = () => {
                 // onClose={ () => setOpen(false) }
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
+                fullWidth
+                
             >
                 <DialogTitle id="alert-dialog-title">
                     Your schedule is overlapped!
                 </DialogTitle>
-                <DialogContent>
+                <DialogContent dividers >
                     <DialogContentText id="alert-dialog-description">
-                        If you wish to make the same schedule to your mentee press "Mark The Schedule"
+                        The schedule you wish to create overlaps your current schedules. Please pick another date and time 
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button variant="outlined" color="error" onClick={ () => setOpen(false) }>Cancel</Button>
-                    <Button variant="contained" onClick={saveSchedule}>
-                        mark the schedule
-                    </Button>
+                    <Button variant="contained" color="info" onClick={ () => setOpen(false) }>Okay</Button>
                 </DialogActions>
             </Dialog>
             <Footer />
@@ -298,16 +312,52 @@ const UserProfile = () => {
     );
 };
 
-const PendingMentees = ({ menteeList }) => {
-    console.log("pending: ", menteeList);
-    const [pendingList, setPendingList] = useState(menteeList)
+const PendingMentees = ({ pendingList }) => {
+    const [openReject, setOpenReject] = useState(false);
+    const [rejectData, setRejectData] = useState({})
+    const [acceptLoading, setAcceptLoading] = useState({});
+    const [rejectLoading, setRejectLoading] = useState(false);
 
-    // filter pending mentee
-    useEffect( () => {
-        let filtered = menteeList?.filter( i => !i.status.accepted );
-        setPendingList(filtered);
+    const saveStatus = async (id, mode) => {
+        try {
+            const res = await axios.post(`${baseUrl}/mentor/accept`, { mentee_id: id, mode }, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("fam-id")}`,
+                },
+                withCredentials: true,
+            })
 
-    }, [menteeList])
+            console.log(res.data);
+            window.location.reload();
+        } catch (error) {
+            console.log(error.response.data);
+            alert(`There was an error: ${error.response.data.msg}`);
+        } 
+    }
+
+    const handleClick = async (i, mode) => {
+        console.log(i);
+        console.log("mentee: ", i._id._id, mode);
+
+        if( mode === "accepted") {
+            await saveStatus(i._id._id, mode);
+
+            setAcceptLoading( prev => ({ ...prev, [i._id._id]: false }) );
+            
+        }
+
+        if( mode ==="rejected" ) {
+            setOpenReject(true);
+            setRejectData({mentee: i, mode: mode});
+        }
+      
+    }
+
+    const handleReject = async () => {
+        setRejectLoading(true);
+        await saveStatus(rejectData.mentee._id._id, rejectData.mode);
+        setRejectLoading(false);
+    }
 
     return (
         <React.Fragment>
@@ -315,33 +365,80 @@ const PendingMentees = ({ menteeList }) => {
                 { pendingList.length === 0 ? 
                 <Typography variant="h5" align="center" >"No Pending Requests..." </Typography>
                 : 
-                (<Stack direction="column" gap={3} textAlign="center" >
+                (<Stack direction="column" gap={3}  >
                     { pendingList?.map( i => (
-                        <Paper sx={{ textAlign: "center", p: 1,pl: 2, pr: 2, borderRadius: 2 }} key={i._id._id} >
-                            <Stack direction="row" justifyContent="center" pb={2} >
+                        <Paper elevation={6} sx={{ p: 2, borderRadius: 2, bgcolor: theme => alpha(theme.palette.warning.dark, 0), overflow: "auto" }} key={i._id._id} >
+                            <Stack direction="row" >
+                                
                                 <Avatar 
                                     src={i._id.img}
                                     alt={i._id.firstname}
-                                    sx={{ width: 70, height: 70 }}
+                                    sx={{ width: 90, height: 90 }}
+                                    variant="rounded"
                                 />
-                            </Stack>  
-                            <Box>
-                                <Typography>{i._id.firstname} {i._id.lastname}</Typography>
-                                <Typography>{i._id.email}</Typography>
-                                <Typography>{i._id.coordinates.address}</Typography>
-
-                                <Typography>{i.status.message}</Typography>
-
-                                <Box textAlign="right">
-                                    <Button>Accept</Button>
-
+                                <Box pl={2}>
+                                    <Typography variant="h6" fontWeight="bold" textTransform="capitalize" >{i._id.firstname} {i._id.lastname}</Typography>
+                                    <Typography fontWeight={300} >{i._id.email}</Typography>
+                                    <Typography fontWeight={300}>{i._id.coordinates.address ? i._id.coordinates.address : "Location address not set!"}</Typography>
                                 </Box>
+                            </Stack>  
+
+                            <Divider sx={{ pt: 1 }} />
+
+                            <Box sx={{ pt: 1 }} >
+                                <Typography>Message: {i.status.message}</Typography>
                             </Box>
+
+                            <Stack mt={2} gap={2} direction="row" justifyContent="end" >
+                                <Button variant="outlined" color="error" onClick={ () => handleClick(i, "rejected") } >Reject</Button>
+                                <LoadingButton 
+                                    loading={acceptLoading[i._id._id] || false} 
+                                    onClick={ () => {
+                                        handleClick(i, "accepted")
+                                        setAcceptLoading( prev => ({ ...prev, [i._id._id]: true }) )
+                                    } } 
+                                    variant="contained" 
+                                >
+                                    Accept
+                                </LoadingButton>
+                            </Stack>
                         </Paper>
                     ) )}
                 </Stack>)
             }
             </Section>
+            <Dialog
+                open={openReject}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                fullWidth
+            >
+                <DialogTitle sx={{ textTransform: "capitalize" }} id="alert-dialog-title">
+                    Reject {rejectData?.mentee?._id?.firstname} {rejectData?.mentee?._id?.lastname} enrollment?
+                </DialogTitle>
+                <DialogContent dividers>
+                    <Typography variant="body1" id="alert-dialog-description">
+                        You are about to reject <Typography component="span" fontWeight="bold" >{rejectData?.mentee?._id?.firstname} {rejectData?.mentee?._id?.lastname}</Typography>'s enrollment!
+                    </Typography>
+                    {/* <DialogContentText id="alert-dialog-description">
+                        This message will be sent to {rejectData._id.firstname}.
+                    </DialogContentText>
+                    <TextField 
+                        placeholder="Tell why you rejected the enrollment..."
+                        size="small"
+                        multiline
+                        minRows={3}
+                        fullWidth
+                        sx={{ mt: 2 }}
+                    /> */}
+                </DialogContent>
+                <DialogActions>
+                    <Button color="inherit" onClick={() => setOpenReject(false)} >Close</Button>
+                    <LoadingButton loading={rejectLoading} variant="contained" color="error" onClick={handleReject} autoFocus>
+                        Reject
+                    </LoadingButton>
+                </DialogActions>
+            </Dialog>
         </React.Fragment>
     )
 }
@@ -484,11 +581,11 @@ const MenteeAppointment = ({ appointment, user }) => {
             console.log(error)
         }
     }
-
+    console.log("app: ", appointment);
     return appointment.length === 0 ? <Message msg="Nothing here yet" variant="h6" align="center" /> : appointment.map( (i,index) => (
         // parent object mentor data
         <React.Fragment key={index}> 
-            {i?.mentee?.map( mentee => (
+            {i?.mentee?.map( mentee => mentee?.schedule.length === 0 ? "" : (
                 // child mentee list
                 <React.Fragment key={mentee._id._id}>
                     <Box mt={1} >
@@ -503,9 +600,11 @@ const MenteeAppointment = ({ appointment, user }) => {
                         <Typography variant="body1" fontWeight={300} >
                             {i?._id?.email}
                         </Typography>
-                       
+                        <Typography variant="body1" fontWeight={300} >
+                            {i?._id?.phone}
+                        </Typography>
                     </Box>
-                    {mentee?.schedule?.map( sched => (
+                    { mentee?.schedule?.map( sched => sched._id.done ? "" : sched._id.cancel ? "" : (
                         // grand schedule list
                         <React.Fragment key={sched._id._id} >
                             <Divider>
@@ -524,8 +623,10 @@ const MenteeAppointment = ({ appointment, user }) => {
                                         alpha(sched?._id?.approved ? theme.palette.success.light : theme.palette.primary.light,0.5),
                                     p: 2,
                                     borderRadius: 5,
+                                    overflow: "auto"
                                 }}
                                 elevation={0}
+                                
                             >
                                 <Stack
                                     direction="row"
@@ -533,22 +634,28 @@ const MenteeAppointment = ({ appointment, user }) => {
                                     gap={1}
                                     alignItems="center"
                                 >
-                                    <Box>
-                                        <Stack sx={{ mt: 1 }}>
-                                            <Typography 
-                                                fontSize={17}
-                                                fontWeight={700}
-                                            >
-                                                Start: {moment(sched?._id?.from).format('lll')}
+                                    <Stack direction="row" alignItems="center" gap={2}>
+
+                                        <CalendarMonth fontSize="large" />
+
+                                        <Divider orientation="vertical" flexItem />
+
+                                        <Stack direction="column" gap={1} >
+                                            <Typography variant="h6" fontWeight={700}>
+                                                {moment(sched?._id?.from).format('LL')}
                                             </Typography>
-                                            <Typography
-                                                fontSize={17}
-                                                fontWeight={700}
-                                            >
-                                                End: {moment(sched?._id?.to).format('lll')}
-                                            </Typography>
+
+                                            <Stack direction="row" alignItems="center" gap={0.2} mb={1} >
+                                                <Typography >{moment(sched?._id?.from).format('LT')}</Typography> 
+                                                - 
+                                                <Typography >{moment(sched?._id?.to).format('LT')}  </Typography>
+                                                <ScheduleIcon />
+                                            </Stack>
+                                                
                                         </Stack>
-                                    </Box>
+                                        
+                                    </Stack>
+                                    
                                     <Box>
                                         <Typography>
                                             {sched?._id?.approved ? "Approved" : "Pending"}
@@ -556,6 +663,8 @@ const MenteeAppointment = ({ appointment, user }) => {
                                     </Box>
                                 </Stack>
                                 
+                                <Divider sx={{ mt: 0, mb: 1 }} />
+
                                 { moment(sched?._id?.to).isBefore() && !sched?._id?.rating?.rated && sched?._id?.approved &&
                                 <Box sx={{ mt: 2 }} width="100%">
                                     <Button variant="contained" color="success" fullWidth onClick={() => handleRate({ sched_id: sched?._id?._id, mentor_id: i?._id?._id }) }>Rate</Button>
@@ -594,6 +703,7 @@ const MenteeAppointment = ({ appointment, user }) => {
 }
 
 const MentorAppointment = ({ appointment }) => {
+    const [cancelLoading, setCancelLoading] = useState({});
 
     return appointment.map( (mentee) => (
         <Box mb={2} key={mentee?._id?._id}>
@@ -608,8 +718,11 @@ const MentorAppointment = ({ appointment }) => {
             <Typography variant="body1" fontWeight={300} >
                 {mentee?._id?.email}
             </Typography>
+            <Typography variant="body1" fontWeight={300} >
+                {mentee?._id?.phone}
+            </Typography>
 
-            { mentee.schedule.map( sched => (
+            { mentee.schedule.map( sched => sched._id.cancel? "" : (
                 <React.Fragment key={sched._id._id}>
                     <Divider>
                         <Typography
@@ -637,43 +750,82 @@ const MentorAppointment = ({ appointment }) => {
                             alignItems="center"
                         >
                             <Box>
-                                {/* <Avatar alt={mentee?._id?.firstname} src={mentee?._id?.img}  />
-                                <Typography
-                                    fontWeight="bold"
-                                    color="inherit"
-                                    textTransform="capitalize"
-                                    variant="h6"
-                                >
-                                    {mentee?._id?.firstname} {mentee?._id?.lastname}
-                                </Typography>
-                                <Typography
-                                    variant="body2"
-                                    fontWeight={300}    
-                                >
-                                    {mentee?._id?.email}
-                                </Typography> */}
+                                <Stack direction="row" alignItems="center" gap={2}>
 
-                                <Stack sx={{ mt: 0 }}>
-                                    <Typography 
-                                        fontSize={17}
-                                        fontWeight={700}
-                                    >
-                                        Starts: {moment(sched?._id?.from).format('llll')}
-                                    </Typography>
-                                    <Typography
-                                        fontSize={17}
-                                        fontWeight={700}
-                                    >
-                                        Ends: {moment(sched?._id?.to).format('llll')}
-                                    </Typography>
+                                    <CalendarMonth fontSize="large" />
+
+                                    <Divider orientation="vertical" flexItem />
+
+                                    <Stack direction="column" gap={1} >
+                                        <Typography variant="h6" fontWeight={700}>
+                                            {moment(sched?._id?.from).format('LL')}
+                                        </Typography>
+
+                                        <Stack direction="row" alignItems="center" gap={0.2} mb={1} >
+                                            <Typography >{moment(sched?._id?.from).format('LT')}</Typography> 
+                                            - 
+                                            <Typography >{moment(sched?._id?.to).format('LT')}  </Typography>
+                                            <ScheduleIcon />
+                                        </Stack>
+                                            
+                                    </Stack>
+
                                 </Stack>
                             </Box>
-                            <Box>
+                            <Box>   
                                 <Typography>
                                     {sched?._id?.approved ? "Approved" : "Pending"}
                                 </Typography>
                             </Box>
+
+                                {/* <Stack sx={{ mt: 0 }}>
+                                    <Typography fontSize={17} >
+                                        Starts: <Typography component="span" fontSize={17} fontWeight={700} >{moment(sched?._id?.from).format('llll')}</Typography>
+                                    </Typography>
+                                    <Typography fontSize={17} >
+                                        Ends: <Typography component="span" fontSize={17} fontWeight={700} >{moment(sched?._id?.to).format('llll')}</Typography>
+                                    </Typography>
+                                </Stack> */}
+                            {/* <Box>
+                                <Typography>
+                                    {sched?._id?.approved ? "Approved" : "Pending"}
+                                </Typography>
+                            </Box> */}
                         </Stack>
+
+                        <Divider  />
+
+                        { !sched?._id?.approved && 
+                            <Stack direction="row" gap={1} mt={1} justifyContent="end" >
+                                <LoadingButton 
+                                    loading={cancelLoading[sched?._id?._id]}
+                                    variant="contained"
+                                    color="inherit"
+                                    onClick={async () => {
+                                        setCancelLoading( prev => ({ ...prev, [sched?._id?._id]: true }) )
+                                        try {
+        
+                                            const res = await axios.get(`${baseUrl}/mentor/schedule/cancel/${ sched?._id?._id }`);
+        
+                                            console.log(res.data)
+        
+                                            if(res.data.success) {
+                                                window.location.reload();
+                                            }
+        
+                                        } catch (error) {
+                                            console.log(error);
+                                            alert(`Error occured: ${error.response.data.msg}`)
+                                        } finally {
+                                            setCancelLoading( prev => ({ ...prev, [sched?._id?._id]: false }) )
+                                        }
+        
+                                    }}
+                                >
+                                    Cancel
+                                </LoadingButton>
+                            </Stack> 
+                        }
                         
                         {sched?._id?.approved && moment(sched?._id?.to).isBefore() && 
                         <Box sx={{ pt: 2 }}>
@@ -696,7 +848,8 @@ const MentorAppointment = ({ appointment }) => {
                                     }
 
                                 } catch (error) {
-                                    console.log(error)
+                                    console.log(error);
+                                    alert(`Error occured: ${error.response.data.msg}`)
                                 }
 
                             }} >Mark as Done</Button>
@@ -718,7 +871,7 @@ const MenteeSchedule = ({ menteeSched }) => {
                     <React.Fragment key={i._id._id}>
                         {i?.mentee?.map( mentee => (
                             <React.Fragment key={mentee?._id._id} >
-                                {mentee?.schedule?.map( sched => (
+                                {mentee?.schedule?.map( sched => sched._id.cancel? "" : (
                                     <React.Fragment key={sched?._id?._id} >
                                         <Paper
                                             sx={{
@@ -865,7 +1018,7 @@ const MenteeList = ({mentee}) => {
                     <Stack key={index} direction="row" >
                         <Avatar 
                             src={i?._id?.img} 
-                            alt={i?._id?.ref_id}  
+                            alt={i?._id?.firstname}  
                             // variant="rounded"
                             sx={{
                                 height: 100,
@@ -886,15 +1039,20 @@ const MenteeList = ({mentee}) => {
     )
 }
 
-const MentorList = ({mentor}) => {
+const MentorList = ({mentor, user}) => {
     const navigate = useNavigate();
+    const [acceptedMentor, setAcceptedMentor] = useState([]);
+    console.log("accepted: ",acceptedMentor)
+    useEffect( () => {
+        setAcceptedMentor(mentor?.map( i => ({ ...i, mentee: i.mentee.filter( data => data._id.ref_id === user?.ref_id && data.status.mode === "accepted" ) }) ))
+
+    }, [mentor, user])
 
     return (
-        <Box sx={{ mt: 5, mb: 5, width: "100%" }} >
+        <Box sx={{ width: "100%" }} >
             <Section title="Mentors" subtitle="Lists of your Mentors.">
-                {console.log("mentopr: ", mentor)}
                 <Stack  sx={{ mt: 2 }} gap={5}>
-                    {mentor?.map( (i, index) => (
+                    {acceptedMentor?.map( (i, index) => i?.mentee.length === 0 ? "" : (
                        <Stack key={index} direction="row" >
                         <Avatar 
                             src={i?._id?.img} 
@@ -910,7 +1068,7 @@ const MentorList = ({mentor}) => {
                             <Typography fontWeight={300} >{i?._id?.email}</Typography> 
 
                             <Box pt={1} >
-                                <Button variant="outlined" size="small" color="inherit" onClick={ () => navigate(`/mentor/profile/${i?._id?.ref_id}/${i?._id?.firstname + "_" + i?._id?.lastname}`) } >View Profile</Button>
+                                <Button variant="outlined" size="small" color="inherit" onClick={ () => navigate(`/mentor/profile/${i?._id?.ref_id}/${i?._id?.firstname + "_" + i?._id?.lastname}`) } >Go to Profile</Button>
                             </Box> 
                         </Box>
                         
@@ -919,6 +1077,73 @@ const MentorList = ({mentor}) => {
                 </Stack>
             </Section>
         </Box>
+    )
+}
+
+const AppliedMentors = ({ mentor, user }) => {
+    const [pendingMentor, setPendingMentor] = useState([]);
+    const [rejectedMentor, setRejectedMentor] = useState([])
+    console.log("pending: ",pendingMentor)
+    useEffect( () => {
+        setPendingMentor(mentor?.map( i => ({ ...i, mentee: i.mentee.filter( data => data._id.ref_id === user?.ref_id && data.status.mode === "pending" ) }) ))
+        setRejectedMentor(mentor?.map( i => ({ ...i, mentee: i.mentee.filter( data => data._id.ref_id === user?.ref_id && data.status.mode === "rejected" ) }) ))
+
+    }, [mentor, user])
+
+    return (
+        <Section title="Applied Mentors"  >
+            <Typography color="green" variant="h6" fontWeight={500} mb={1} mt={5}>
+                Pending
+            </Typography>
+
+            <Stack sx={{ mt: 2 }} gap={5}>
+                {pendingMentor?.map( (i, index) => i?.mentee.length === 0 ? "" : (
+                    <Stack key={index} direction="row" >
+                    <Avatar 
+                        src={i?._id?.img} 
+                        alt={i?._id?.ref_id}  
+                        // variant="rounded"
+                        sx={{
+                            height: 100,
+                            width: 100
+                        }}
+                    />
+                    <Box ml={2}>
+                        <Typography variant="h6" textTransform="capitalize" >{i?._id?.firstname} {i?._id?.lastname}</Typography>
+                        <Typography fontWeight={300} >{i?._id?.email}</Typography> 
+                        <Typography>Status: Pending</Typography>
+                    </Box>
+                    
+                </Stack>
+                ))}
+            </Stack>
+
+            <Typography color="darkred" variant="h6" fontWeight={500} mb={1} mt={5}>
+                Rejected
+            </Typography>
+
+            <Stack sx={{ mt: 2 }} gap={5}>
+                {rejectedMentor?.map( (i, index) => i?.mentee.length === 0 ? "" : (
+                    <Stack key={index} direction="row" >
+                    <Avatar 
+                        src={i?._id?.img} 
+                        alt={i?._id?.ref_id}  
+                        // variant="rounded"
+                        sx={{
+                            height: 100,
+                            width: 100
+                        }}
+                    />
+                    <Box ml={2}>
+                        <Typography variant="h6" textTransform="capitalize" >{i?._id?.firstname} {i?._id?.lastname}</Typography>
+                        <Typography fontWeight={300} >{i?._id?.email}</Typography> 
+                        <Typography color="error" >Status: Rejected</Typography>
+                    </Box>
+                    
+                </Stack>
+                ))}
+            </Stack>
+        </Section>
     )
 }
 
