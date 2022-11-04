@@ -54,6 +54,7 @@ const ResetPassword = () => {
                 setResetToken(res.data.resetToken);
 
             } catch (error) {
+                console.log(error.response)
                 alert(`There was an error: ${error}. Please refresh the page.`)
             }
         }

@@ -234,11 +234,14 @@ const ForgotPassword = ({ open, setOpen }) => {
         setLoading(true)
         try {
             
-            const res = await axios.post(`${baseUrl}/account/reset/url`, { email });
+            const res = await axios.post(`${baseUrl}/account/reset/url`, { email }, {
+                withCredentials: true,
+            });
 
             alert(`${res.data.msg}`);
             setOpen(false);
         } catch (error) {
+            console.log(error.response);
             alert(`Please refresh the page. There was an error: ${error}`)
         } finally {
             setLoading(false)
