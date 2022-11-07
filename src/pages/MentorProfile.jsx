@@ -15,13 +15,7 @@ import {
     Typography,
 } from "@mui/material";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
-import LocalPhoneOutlinedIcon from "@mui/icons-material/LocalPhoneOutlined";
 import MailOutlineOutlinedIcon from "@mui/icons-material/MailOutlineOutlined";
-import FacebookIcon from "@mui/icons-material/Facebook";
-import InstagramIcon from "@mui/icons-material/Instagram";
-import TwitterIcon from "@mui/icons-material/Twitter";
-import LinkedInIcon from "@mui/icons-material/LinkedIn";
-import VerifiedIcon from "@mui/icons-material/Verified";
 import SmartphoneRoundedIcon from '@mui/icons-material/SmartphoneRounded';
 import Footer from "../components/Footer";
 import Location from "../components/map/Location";
@@ -243,10 +237,10 @@ const MentorProfile = () => {
                                             <MailOutlineOutlinedIcon color="info" />
                                         }
                                     />
-                                    <Details 
+                                    { userLoggedIn && <Details 
                                         label={mentor?.phone}
                                         icon={<SmartphoneRoundedIcon color="info" />}
-                                    />
+                                    />}
                                 </Stack>
                             </Stack>
                         </Stack>

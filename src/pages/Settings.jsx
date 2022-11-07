@@ -195,7 +195,7 @@ const Settings = () => {
                                 <Box mt={2}>
                                     <Typography fontWeight={300}>Phone Number</Typography>
                                     <TextField
-                                        placeholder="0999 123 2341"
+                                        placeholder="Ex. 0999 123 2341"
                                         size="small"
                                         type="number"
                                         value={phone}

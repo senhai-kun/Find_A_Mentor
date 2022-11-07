@@ -106,31 +106,6 @@ const Recommended = () => {
 
                 </Stack>
                 
-
-                        
-                {/* <Stack direction='row' justifyContent='center' flexWrap="wrap" flexGrow={1} >
-                    <Card 
-                        name="Ayla S."
-                        course="Marketing Expert"
-                        rating={4.5}
-                        img={ava1}
-                    />
-
-                    <Card 
-                        name="Ayla S."
-                        course="Marketing Expert"
-                        rating={5}
-                        img={ava1}
-                    />
-                    <Card 
-                        name="Ayla S."
-                        course="Marketing Expert"
-                        rating={4.5}
-                        img={ava1}
-                    />
-                   
-                </Stack> */}
-                
                 <Box sx={{ textAlign: 'center', mt: 5 }} >
                     <Button onClick={ () => navigate('/search', { replace: true }) } variant='contained' color='primary' size='large' sx={{ width: { xs: '80%', sm: '40%' } }} >Browse Mentors</Button>
                 </Box>

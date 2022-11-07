@@ -18,6 +18,7 @@ export const authSlice = createSlice({
         validateLogin: (state) => {
             console.log("validate");
             state.loggedIn = true;
+            state.isLoading = false;
         },
         login: (state, action) => {
             state.loggedIn = action.payload.success;

@@ -20,17 +20,17 @@ const GlobalListener = () => {
 
     useEffect(() => {
         const listener = (e) => {
-            console.log(e);
-            if (e.key === "fam-id" && e.oldValue && !e.newValue) {
-                // Logout other tabs
-                dispatch(logoutUser(navigate));
-            }
+             console.log(e);
+             if (e.key === "fam-id" && e.oldValue && !e.newValue) {
+                 // Logout other tabs
+                 dispatch(logoutUser(navigate));
+             }
 
-            if (e.key === "fam-id" && e.newValue && !e.oldValue) {
-                // Refresh page to authenticate login
-                navigate(0);
-            }
-        };
+             if (e.key === "fam-id" && e.newValue && !e.oldValue) {
+                 // Refresh page to authenticate login
+                 navigate(0);
+             }
+         };
 
         window.addEventListener("storage", listener);
 

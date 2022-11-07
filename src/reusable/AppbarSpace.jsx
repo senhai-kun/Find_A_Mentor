@@ -9,7 +9,6 @@ const AppbarSpace = ({ color, divider, disable }) => {
                     height: (theme) => theme.mixins.toolbar.minHeight,
                     backgroundColor: color,
                 }}
-                // bgcolor={bgColor ? bgColor : "inherit"}
             ></Box>
 
             <Divider sx={{ mt: { xs: 0, sm: 1 }, display: divider ? "block" : "none" }} />

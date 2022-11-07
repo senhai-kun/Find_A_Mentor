@@ -16,7 +16,7 @@ const ChooseRole = ({ open, close, submit, setIsMentor, setError, setErrorMsg })
 
     const [ select, setSelect ] = useState("");
     const [ loading, setLoading ] = useState(false);
-    const { submitForm, values, setFieldError } = useFormikContext();
+    const { values, setFieldError } = useFormikContext();
 
     const handleClose = () => {
         setSelect("")
@@ -34,8 +34,7 @@ const ChooseRole = ({ open, close, submit, setIsMentor, setError, setErrorMsg })
 
     const save = async () => {
         setIsMentor( select === "mentee" ? false : true);
-        // close(false);
-        // submitForm()
+        
         setLoading(true)
         try {
             const fetch = await axios.post(

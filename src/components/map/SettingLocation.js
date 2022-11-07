@@ -67,7 +67,7 @@ const SettingLocation = ({ defaultAddress, location, setLocation }) => {
                 <MapContainer
                     whenCreated={(map) => setMap(map)}
                     center={[location?.lat, location?.lng]}
-                    zoom={16}
+                    zoom={13}
                     zoomAnimationThreshold={1000}
                     scrollWheelZoom={false}
                     dragging={true}

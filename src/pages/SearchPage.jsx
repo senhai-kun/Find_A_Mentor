@@ -33,12 +33,12 @@ const SearchPage = () => {
             try {
                 const res = await axios.get(`${baseUrl}/mentors`);
     
-                console.log(res.data.mentors)
+                // console.log(res.data.mentors)
                 setMentors(res.data.mentors);
                 setFiltered(res.data.mentors);
                 setData(true)
             } catch (error) {
-                console.log(error)
+                console.log(error);
             }
         }
         fetchAllMentors();
@@ -59,8 +59,8 @@ const SearchPage = () => {
                     <PageLoader />
                 ) : (
                     <Stack mt={5} spacing={4} pb={5}>
-                        {onFilter ? filtered.map( (user, index) => (
-                            <React.Fragment key={index}>
+                        {onFilter ? filtered.map( (user) => (
+                            <React.Fragment key={user?._id}>
                                 <SearchCard 
                                     fullname={`${user?.firstname} ${user?.lastname}`}
                                     img={user?.img}
@@ -71,8 +71,8 @@ const SearchPage = () => {
                                     ref_id={user?.ref_id}
                                 />
                             </React.Fragment>
-                        )) : mentors.map( (user, index) => (
-                            <React.Fragment key={index}>
+                        )) : mentors.map( (user) => (
+                            <React.Fragment key={user?._id}>
                                 <SearchCard 
                                     fullname={`${user?.firstname} ${user?.lastname}`}
                                     img={user?.img}
@@ -114,11 +114,11 @@ const Filter = ({ mentors, setMentors, filtered, setFiltered, setOnFilter }) => 
     const handleSearch = e => {
         e.preventDefault();
 
-        console.log(search.length);
+        // console.log(search.length);
 
         axios.get(`${baseUrl}/search/mentor`, { params: { query: search }})
         .then( res => {
-            console.log(res.data.mentors);
+            // console.log(res.data.mentors);
             setMentors(res.data.mentors)
             // setOnFilter(false);
 

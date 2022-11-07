@@ -119,50 +119,6 @@ const GettingStarted = () => {
                         autoHighlight
                         renderInput={ params => <TextField {...params} required /> }
                     />
-
-                    {/* <TextField
-                        size="small"
-                        select
-                        sx={{ pt: 3 }}
-                        value={profession}
-                        onChange={(e) => setProfession(e.target.value)}
-                        fullWidth
-                        required
-                    >
-                        <MenuItem disabled divider value="placeholder">
-                            Please select your profession
-                        </MenuItem>
-                        <MenuItem value="Engineering">Engineering</MenuItem>
-                        <MenuItem value="Information Technology">
-                            Information Technology
-                        </MenuItem>
-                        <MenuItem value="Business & Management">
-                            Business & Management
-                        </MenuItem>
-                        <MenuItem value="Product & Marketing">
-                            Product & Marketing
-                        </MenuItem>
-                        {professions.map( i => (
-                            <MenuItem key={i} value={i} >
-                                {i}
-                            </MenuItem>
-                        ))} */}
-
-                        {/* <MenuItem value={customCategory} > */}
-                            {/* <Stack pl={2} pr={2} pt={1} gap={2}>
-                                <TextField
-                                    size="small"
-                                    placeholder="Your field is not on the list? Enter it here."
-                                    value={customCategory}
-                                    onChange={ e => setCustomCategory(e.target.value)}
-                                />
-
-                                <Button variant="contained" color="info" onClick={ () => setProfession(customCategory) } >
-                                    Add
-                                </Button>
-                            </Stack> */}
-                        {/* </MenuItem> */}
-                    {/* </TextField> */}
                 </Box>
 
                 <Box pt={5}>

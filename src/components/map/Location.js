@@ -1,31 +1,14 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Button, Typography, Box } from "@mui/material";
-// import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
+import React, { useRef, useState } from "react";
+import { Box } from "@mui/material";
 import {
     MapContainer,
-    Marker,
-    Popup,
     TileLayer,
     useMap,
     useMapEvents,
 } from "react-leaflet";
-import L from "leaflet";
 import Route from "./Route";
-import formatTime from "humanize-duration";
 import "leaflet-routing-machine";
 import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
-
-const containerStyle = {
-    width: "100%",
-    height: "600px",
-};
-
-const center = {
-    lat: 15.1449853,
-    lng: 120.5887029,
-};
-
-const libraries = ["places"];
 
 const Location = ({ userCoordinates, mentorCoordinates}) => {
     // const { isLoaded, loadError } = useJsApiLoader({
@@ -169,11 +152,6 @@ const Location = ({ userCoordinates, mentorCoordinates}) => {
                     }}
                 />
                 <MyMap />
-                {/* <Marker position={mentorCoordinates}>
-                    <Popup>
-                        A pretty CSS3 popup. <br /> Easily customizable.
-                    </Popup>
-                </Marker> */}
                 {check && (
                     <Route start={userCoordinates} end={mentorCoordinates} summary={setSummary} />
                 )}

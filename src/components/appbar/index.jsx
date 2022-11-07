@@ -38,17 +38,13 @@ const style = makeStyles((theme) => ({
     },
     close: {
         left: "-100%",
-        // backgroundColor: 'white',
         width: "100%",
         transition: "all .5s ease-out",
     },
     open: {
-        // position: 'sticky',
         top: "100%",
         left: "0%",
         backgroundColor: "white",
-        // width: '100%',
-        // textAlign: 'center',
         transition: "all .5s ease",
     },
 }));
@@ -130,15 +126,6 @@ const Header = () => {
                                 sx={{ display: { xs: "none", sm: "flex" } }}
                                 alignItems="center"
                             >
-                                {/* <Box
-                                    display={{
-                                        xs: "none",
-                                        sm: "none",
-                                        md: "block",
-                                    }}
-                                >
-                                    <Search />
-                                </Box> */}
                                 <Button
                                     type="text"
                                     color="inherit"

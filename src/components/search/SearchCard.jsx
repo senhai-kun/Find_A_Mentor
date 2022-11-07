@@ -1,12 +1,10 @@
 import React from 'react'
-import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
-import BookmarkRoundedIcon from '@mui/icons-material/BookmarkRounded';
 import VerifiedRoundedIcon from '@mui/icons-material/VerifiedRounded';
-import { Avatar, Button, Chip, Divider, IconButton, Paper, Rating, Stack, Typography, Box } from '@mui/material';
+import { Avatar, Button, Chip, Divider,  Paper, Rating, Stack, Typography, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 
-const SearchCard = ({ fullname, img, profession, rating, isVerified, bookmark, about, skills, price, ref_id }) => {
+const SearchCard = ({ fullname, img, profession, rating, isVerified,  about, skills, ref_id }) => {
     const navigate = useNavigate();
 
     return (
@@ -42,8 +40,6 @@ const SearchCard = ({ fullname, img, profession, rating, isVerified, bookmark, a
                             <Rating  defaultValue={rating} size="medium" readOnly precision={0.1} />
                             <Typography>({rating}) ratings</Typography>
                         </Stack>
-
-                        {/* <Button onClick={ () => navigate(`/mentor/profile/${fullname}`)} size='small' color='success' sx={{ mt: 1 }} >Go To Profile</Button> */}
 
                         <Divider sx={{ mt: 2 }} />
 
@@ -81,11 +77,6 @@ const SearchCard = ({ fullname, img, profession, rating, isVerified, bookmark, a
                         
                         <Stack direction={{ xs: 'column', sm: 'column', md: 'row' }} alignItems='center' mb={2} spacing={1} >
                             <Button onClick={ () => navigate(`/mentor/profile/${ref_id}/${fullname.replace(" ", "_")}`)} variant='contained' color='primary' size='large' sx={{ width: { xs: '100%', sm: '90%', md: '30%' } }} >View Profile</Button>
-                        
-                            {/* <Typography variant='h6' >
-                                Only
-                                <Typography variant='h6' fontWeight='bold' component='span' > ₱{price} /month</Typography> 
-                            </Typography> */}
                         </Stack>
                     </Box>
                 </Stack>
