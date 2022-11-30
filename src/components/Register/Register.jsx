@@ -123,7 +123,6 @@ const Input = ({
 
 const Register = () => {
     const navigate = useNavigate();
-    const dispatch = useDispatch();
     const [isMentor, setIsMentor] = useState(false);
     const [submit, setSubmit] = useState(false);
     const [openRole, setOpenRole] = useState(false);
@@ -143,32 +142,10 @@ const Register = () => {
                     confirmPassword: "",
                 }}
                 validationSchema={validationSchema}
-                onSubmit = {async (e, { setFieldError }) => {
+                onSubmit = { () => {
                     console.log("submit form");
                     setSubmit(true)
                     setOpenRole(true)
-                    // setSubmit(true);
-                    // try {
-                    //     const fetch = await axios.post(
-                    //         `${baseUrl}/account/register`,
-                    //         { ...e, ismentor: isMentor },
-                    //         {
-                    //             withCredentials: true,
-                    //         }
-                    //     );
-
-                    //     console.log("login from register: ", fetch.data)
-                    //     dispatch(registerUser({ navigate, data: fetch.data }));
-                        
-                    // } catch (err) {
-                    //     // dispatch(login(e.response.data.success));
-                    //     console.log(err.response.data);
-                    //     setErrorMsg(err.response.data.email);
-                    //     setError(true)
-                    //     setFieldError(err.response.data.param, err.response.data.errorMsg);
-                    // } finally {
-                    //     setSubmit(false);
-                    // }
                 }}
 
             >
@@ -356,27 +333,6 @@ const Register = () => {
                             size="large"
                             color="warning"
                             sx={{ mt: 3 }}
-                            // onClick={ () => formik.validateField("firstname")}
-                            // onClick={ async () => {
-                            //     // touch all fields
-                            //     await formik.setTouched({
-                            //         firstname: true,
-                            //         lastname: true,
-                            //         email: true,
-                            //         phone: true,
-                            //         birthday: true,
-                            //         password: true,
-                            //         confirmPassword: true
-                            //     })
-                            //     await formik.validateForm()
-                            //     if(!formik.isValid) {
-                            //         console.log("theres an error")
-                            //     } else {
-                            //         console.log("no error")
-                            //     }
-                            //     console.log("errors", formik.errors)
-                            //     console.log("valid?: ", Object.keys(formik.errors).length)
-                            // }}
                             type="submit"
                             loading={submit}
                         >

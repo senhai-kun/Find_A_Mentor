@@ -5,16 +5,20 @@ let theme = createTheme({
         background: {
             // paper: '#f3f7fa',
         },
+        text: {
+            primary: "#172E59"
+        },
+    
     },
     typography: {
         fontFamily: ["Lexend", "sans-serif"].join(),
     },
     components: {
-        MuiTypography: {
-            defaultProps: {
-                color: "#172E59",
-            },
-        },
+        // MuiTypography: {
+        //     defaultProps: {
+        //     },
+
+        // },
         MuiContainer: {
             styleOverrides: {
                 root: {

@@ -111,7 +111,12 @@ const MentorAppointment = ({ appointment }) => {
                                         setCancelLoading( prev => ({ ...prev, [sched?._id?._id]: true }) )
                                         try {
         
-                                            const res = await axios.get(`${baseUrl}/mentor/schedule/cancel/${ sched?._id?._id }`);
+                                            const res = await axios.get(`${baseUrl}/mentor/schedule/cancel/${ sched?._id?._id }`, {
+                                                headers: {
+                                                    Authorization: `Bearer ${localStorage.getItem("fam-id")}`,
+                                                },
+                                                withCredentials: true,
+                                            });
         
                                             console.log(res.data)
         
@@ -145,7 +150,12 @@ const MentorAppointment = ({ appointment }) => {
                             <Button variant="contained" color="success" endIcon={<DoneAllRoundedIcon />} onClick={ async () => {
                                 try {
 
-                                    const res = await axios.get(`${baseUrl}/mentor/schedule/done/${ sched?._id?._id }`);
+                                    const res = await axios.get(`${baseUrl}/mentor/schedule/done/${ sched?._id?._id }`, {
+                                        headers: {
+                                            Authorization: `Bearer ${localStorage.getItem("fam-id")}`,
+                                        },
+                                        withCredentials: true,
+                                    });
 
                                     console.log(res.data)
 

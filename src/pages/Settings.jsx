@@ -40,6 +40,7 @@ import SettingLocation from "../components/map/SettingLocation";
 import professions from "../utils/professions";
 import { useFormik } from "formik";
 import * as yup from "yup";
+import { useCallback } from "react";
 
 const Input = styled("input")({
     display: "none",
@@ -115,9 +116,7 @@ const Settings = () => {
             window.location.reload();
 
         }
-        // if (user.img !== profileImage) {
-        //     dispatch(updateProfile({ img: profileImage, ismentor: user?.ismentor, ref_id: user?.ref_id, firstname, lastname, location}));
-        // }
+  
     };
 
     return (
@@ -425,12 +424,67 @@ const ChangePassword = ({ open, toggle }) => {
 }
 
 const LocationSettings = ({ user, location, setLocation }) => {
+    const [addressQuery, setAddressQuery] = useState("");
+    const [select, setSelect] = useState("")
+    const [addressList, setAddressList] = useState([{
+        address: ""
+    }]);
+
+    useEffect( () => {
+        const source = axios.CancelToken.source();
+
+        const searchAddress = async () => {
+            const res = await axios.get(`${baseUrl}/location/search?addressQuery=${addressQuery}`, { cancelToken: source.token });
+
+            setAddressList(res.data.locations)
+            // console.log(res.data)
+        } 
+
+        searchAddress()
+
+        return () => {
+            source.cancel("query changed, cancel fetching addresses...")
+        }
+
+
+    }, [addressQuery])
+
+    console.log("select", select);
 
     return (
         <React.Fragment>
             <Typography variant="h6" fontWeight={300}>
                 Location
             </Typography>
+
+            <Autocomplete 
+                size="small"
+                sx={{ textAlign: "right" }}
+                freeSolo
+                // value={addressQuery}
+                getOptionLabel={(option) => option.address}
+                options={addressList}
+                onChange={ (e, value) => {
+                    setSelect(value);
+                    setLocation(value.coordinates)
+                }}
+                renderInput={ props => 
+                    <TextField 
+                        {...props} 
+                        sx={{ width: "50%" }}
+                        placeholder="Search place..." 
+                        value={addressQuery}
+                        onChange={ e => setAddressQuery(e.target.value)}
+                    /> 
+                }
+                renderOption={(props, option) => {
+                    return (
+                      <li {...props} key={option.index}>
+                        {option.address}
+                      </li>
+                    );
+                }}
+            />
 
             <SettingLocation defaultAddress={user?.coordinates?.address} location={location} setLocation={setLocation} />
 

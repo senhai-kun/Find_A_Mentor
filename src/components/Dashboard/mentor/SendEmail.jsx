@@ -29,6 +29,11 @@ const SendEmail = ({ user, menteeList }) => {
                 to: sendTo,
                 mentor: `${user?.firstname} ${user?.lastname}`,
                 text: msg
+            }, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("fam-id")}`,
+                },
+                withCredentials: true,
             })
 
             console.log(res.data);

@@ -64,9 +64,9 @@ const Intro = () => {
                             fontWeight="bold"
                             align="center"
                         >
-                            Find A{" "}
+                            Mentor{" "}
                             <Box component="span" color="#0277bd">
-                                Mentor
+                                Verse
                             </Box>
                         </Typography>
 

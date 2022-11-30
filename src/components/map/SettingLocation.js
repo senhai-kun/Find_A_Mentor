@@ -19,43 +19,35 @@ const SettingLocation = ({ defaultAddress, location, setLocation }) => {
         useMapEvents({
             click: (e) => {
                 console.log(e);
-                // if ( location.lat.toFixed(0) <= 0 ) {
-                    console.log("asdsd", e.latlng)
-                    const options = {
-                        method: 'GET',
-                        url: 'https://trueway-geocoding.p.rapidapi.com/ReverseGeocode',
-                        params: {location: `${e.latlng.lat},${e.latlng.lng}`, language: 'en'},
-                        headers: {
-                          'X-RapidAPI-Key': '4d09394864msh7a2f85be8385857p1b7638jsn6043c72e0dd5',
-                          'X-RapidAPI-Host': 'trueway-geocoding.p.rapidapi.com'
-                        }
-                      };
-                      
-                      axios.request(options).then(function (response) {
-                        console.log("address: ",response.data);
-                          console.log(response.data.results[0].locality, response.data.results[0].area, response.data.results[0].country);
-                          let add = response.data.results[0]
-                        setLocation({
-                            lng: e.latlng.lng,
-                            lat: e.latlng.lat,
-                            address: `${add?.locality}, ${add?.area}, ${add?.country}`
-                        });
-                        setAddress(`${add?.locality}, ${add?.area}, ${add?.country}`);
+                console.log("asdsd", e.latlng)
+                const options = {
+                    method: 'GET',
+                    url: 'https://trueway-geocoding.p.rapidapi.com/ReverseGeocode',
+                    params: {location: `${e.latlng.lat},${e.latlng.lng}`, language: 'en'},
+                    headers: {
+                        'X-RapidAPI-Key': '4d09394864msh7a2f85be8385857p1b7638jsn6043c72e0dd5',
+                        'X-RapidAPI-Host': 'trueway-geocoding.p.rapidapi.com'
+                    }
+                    };
+                    
+                    axios.request(options).then(function (response) {
+                    console.log("address: ",response.data);
+                        console.log(response.data.results[0].locality, response.data.results[0].area, response.data.results[0].country);
+                        let add = response.data.results[0]
+                    setLocation({
+                        lng: e.latlng.lng,
+                        lat: e.latlng.lat,
+                        address: `${add?.locality}, ${add?.area}, ${add?.country}`
+                    });
+                    setAddress(`${add?.locality}, ${add?.area}, ${add?.country}`);
 
-                      }).catch(function (error) {
-                          console.error(error);
-                      });
-                // }
-                // console.log(location.lat.toFixed(0))
+                    }).catch(function (error) {
+                        console.error(error);
+                    });
             },
             locationfound: (locationfound) => {
                 console.log("location found: ", locationfound);
             }
-
-            // layeradd: e => {
-            //   console.log(e.layer?._route?.summary?.totalTime)
-            //   console.log("layeradd: ",e)
-            // },
         });
 
         return null;
@@ -86,8 +78,8 @@ const SettingLocation = ({ defaultAddress, location, setLocation }) => {
                     />
                     <MyMap />
                     <Marker position={location}>
-                        <Popup  >
-                         {address}
+                        <Popup>
+                            {address}
                         </Popup>
                     </Marker>
                 </MapContainer>

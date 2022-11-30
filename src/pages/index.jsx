@@ -68,7 +68,7 @@ const Pages = () => {
                 />
                 <Route path="/account/login" element={<LoginContainer />} />
                 <Route path="/account/register" element={<LoginContainer />} />
-                <Route path="/chat/:user" element={<Chat />} />
+                <Route path="/chat/:user_ref_id" element={<Chat />} />
                 <Route path="/account/reset" element={<ResetPassword />} />
                 
                 <Route path="*" element={<NotFound />} />

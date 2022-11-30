@@ -52,6 +52,7 @@ import SendEmail from "../components/Dashboard/mentor/SendEmail";
 import MentorAppointment from "../components/Dashboard/mentor/MentorAppointment";
 import MentorSchedule from "../components/Dashboard/mentor/MentorSchedule";
 import MenteeList from "../components/Dashboard/mentor/MenteeList";
+import ChatRoundedIcon from '@mui/icons-material/ChatRounded';
 
 const Details = ({ icon, label, variant, size }) => {
     return (
@@ -214,11 +215,11 @@ const UserProfile = () => {
                         </Stack>
                     </Stack>
 
-                    {/* <Box>
+                    <Box>
                         <IconButton onClick={ () => navigate(`/chat/${user?.ref_id}`)} size="large" >
-                            <ChatIcon color="primary" fontSize="large" />
+                            <ChatRoundedIcon color="primary" fontSize="large" />
                         </IconButton>
-                    </Box> */}
+                    </Box>
                 </Stack>
             </Container>
 

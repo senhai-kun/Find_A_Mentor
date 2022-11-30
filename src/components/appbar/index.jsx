@@ -25,6 +25,7 @@ import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { userData } from "../../redux/slicer/userSlice";
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
+import logo from "../../asset/logo.png";
 
 const style = makeStyles((theme) => ({
     menuWrapper: {
@@ -112,9 +113,13 @@ const Header = () => {
                             justifyContent="space-between"
                             alignItems="center"
                         >
-                            <Typography onClick={ () => navigate("/")} variant="h5" fontWeight="bolder"sx={{ cursor: "pointer" }} >
-                                MENTOR
-                            </Typography>
+                    
+                            <Stack direction="row" alignItems="center" gap={1} sx={{ cursor: "pointer" }} >
+                                <Avatar src={logo} sx={{ width: 50, height: 50 }} />
+                                <Typography onClick={ () => navigate("/")} variant="h5" fontWeight="bolder"  color="#0277bd" >
+                                    MENTOR <Typography component="span" fontSize="inherit" color="#ff6600" fontWeight={400} >VERSE</Typography> 
+                                </Typography>
+                            </Stack>
 
                             <Box sx={{ display: { xs: "flex", sm: "none" } }}>
                                 <Hamburger toggled={isOpen} toggle={setOpen} />
@@ -292,7 +297,7 @@ const UserMenu = ({ user }) => {
                     src={user?.img}
                     alt={user?.firstname}
                 />
-                <Typography fontWeight={500} textTransform="capitalize">{user?.firstname}</Typography>
+                <Typography color="text.primary" fontWeight={500} textTransform="capitalize">{user?.firstname}</Typography>
             </IconButton>
             <Menu
                 open={open}

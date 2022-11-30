@@ -8,7 +8,7 @@ import Header from "../components/Header";
 const LandingPage = () => {
     return (
         <React.Fragment>
-            <Header title="Mentor" />
+            <Header title="Mentor Verse" />
             <Intro />
 
             <Instruction />

@@ -31,7 +31,7 @@ const CardDetails = ({ title, sub, notAvail }) => {
     )
 }
 
-const Card = ({ name, course, rating, img, online, meetup, solo }) => {
+const Card = ({ name, course, rating, img }) => {
     return (
         <Box sx={{ backgroundColor: '#fff', p: { xs: 3, sm: 5 }, borderRadius: 2, m: 3 }} boxShadow={10} >
             <Stack direction='row' justifyContent='space-between' >
@@ -107,7 +107,9 @@ const Recommended = () => {
                 </Stack>
                 
                 <Box sx={{ textAlign: 'center', mt: 5 }} >
-                    <Button onClick={ () => navigate('/search', { replace: true }) } variant='contained' color='primary' size='large' sx={{ width: { xs: '80%', sm: '40%' } }} >Browse Mentors</Button>
+                    <Button onClick={ () => navigate('/search', { replace: true }) } variant='contained' color='warning' size='large' sx={{ width: { xs: '80%', sm: '40%' } }} >
+                        Browse Mentors
+                    </Button>
                 </Box>
             
             </Container>
