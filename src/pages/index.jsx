@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 import { userData } from "../redux/slicer/userSlice";
 import { isLoading, isLoggedIn } from "../redux/slicer/authSlice";
 import ResetPassword from "./ResetPassword";
+import Scheduler from "./Scheduler";
 
 const Pages = () => {
     const user = useSelector(userData);
@@ -71,6 +72,7 @@ const Pages = () => {
                 <Route path="/chat/:user_ref_id" element={<Chat />} />
                 <Route path="/account/reset" element={<ResetPassword />} />
                 
+                <Route path="/scheduler" element={<Scheduler />} />
                 <Route path="*" element={<NotFound />} />
             </Routes>
         </React.Fragment>

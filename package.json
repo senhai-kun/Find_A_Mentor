@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@aldabil/react-scheduler": "^2.5.13",
     "@emotion/react": "^11.8.1",
     "@emotion/styled": "^11.8.1",
     "@mui-treasury/components": "^1.10.1",

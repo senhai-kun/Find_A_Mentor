@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { alpha, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Paper, Rating, Stack, Typography } from '@mui/material';
 import axios from 'axios';
 import Message from '../../../reusable/Message';
@@ -12,6 +12,17 @@ const MenteeAppointment = ({ appointment, user }) => {
     const [rate, setRate] = useState(0);
     const [schedId, setSchedId] = useState(null);
     const [mentorId, setMentorId] = useState(null);
+    const [pending, setPending] = useState(false);
+
+    useEffect( () => {
+        appointment.map( i => i.mentee.map( mentee => mentee.schedule.map( sched => {
+            if(!sched._id.rated) {
+                setPending(true);
+                return null;
+            }
+            return null;
+        }) ) )
+    }, [appointment])
 
     const handleRate = ({ sched_id, mentor_id }) => {
         console.log(sched_id, mentor_id)
@@ -40,7 +51,7 @@ const MenteeAppointment = ({ appointment, user }) => {
             console.log(error)
         }
     }
-    console.log("app: ", appointment);
+
     return appointment.length === 0 ? <Message msg="Nothing here yet" variant="h6" align="center" /> : appointment.map( (i,index) => (
         // parent object mentor data
         <React.Fragment key={index}> 
@@ -125,7 +136,7 @@ const MenteeAppointment = ({ appointment, user }) => {
                                 <Divider sx={{ mt: 0, mb: 1 }} />
 
                                 { moment(sched?._id?.to).isBefore() && !sched?._id?.rating?.rated && sched?._id?.approved &&
-                                <Box sx={{ mt: 2 }} width="100%">
+                                <Box sx={{ mt: 2 }} width="100%"  >
                                     <Button variant="contained" color="success" fullWidth onClick={() => handleRate({ sched_id: sched?._id?._id, mentor_id: i?._id?._id }) }>Rate</Button>
                                 </Box>} 
                                 
@@ -135,6 +146,23 @@ const MenteeAppointment = ({ appointment, user }) => {
                     ) )}
                 </React.Fragment>
             ) ) }
+
+            <Dialog open={pending} onClose={ () => setPending(false)} >
+                <DialogTitle sx={{ textTransform: "capitalize" }}>
+                    Pending to Rate
+                </DialogTitle>
+                <DialogContent dividers>
+                    A session has concluded, Please Rate your mentor on how good them is.
+
+                    <Box sx={{ pt: 3 }}>
+                      
+                    </Box>
+                </DialogContent>
+
+                <DialogActions>
+                    <Button onClick={() => setPending(false)} color="inherit" variant="text" >Close</Button>
+                </DialogActions>
+            </Dialog>
 
             <Dialog open={openRating} onClose={ () => setOpenRating(false)} >
                 <DialogTitle sx={{ textTransform: "capitalize" }}>
