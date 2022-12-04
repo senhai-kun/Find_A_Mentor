@@ -6,6 +6,7 @@ import baseUrl from '../utils/baseUrl';
 import axios from 'axios'
 import { useSelector } from 'react-redux';
 import { userData } from '../redux/slicer/userSlice';
+import DateSetter from '../components/scheduler/DateSetter';
 
 const Scheduler = () => {
     const user = useSelector(userData);
@@ -49,8 +50,7 @@ const Scheduler = () => {
     return (
     <React.Fragment>
         <AppbarSpace />
-        <Container sx={{ mt: 2 }} >
-            asd
+        <Container sx={{ mt: 5 }} >
             <Calendar 
                 // events={list.map( i => i.mentee.map( mentee => {
                 //     return {
@@ -60,9 +60,9 @@ const Scheduler = () => {
                 //         end: new Date("2022-12-03T14:01"),
                 //     }
                 // } ) )}
-                events={list[0]}
+                events={list.map( i => i).flat()}
                 view='month'
-                
+                customEditor={ (scheduler) => <DateSetter event={scheduler} /> }
             />
         </Container>
     </React.Fragment>
