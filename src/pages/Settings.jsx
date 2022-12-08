@@ -50,7 +50,6 @@ const Input = styled("input")({
 const Settings = () => {
     const dispatch = useDispatch();
     const user = useSelector(userData);
-    // const loading = useSelector(loadComponent);
     const [loading, setLoading] = useState(false);
     const [openChangePass, setOpenChangePass] = useState(false);
 
@@ -69,9 +68,6 @@ const Settings = () => {
 
     useEffect(() => {
         setProfileImage(user?.img);
-        // if (user.coordinates) {
-        //     setLocation(user.coordinates)
-        // }
         setFirstname(user?.firstname);
         setLastname(user?.lastname);
         setPhone(user?.phone);
@@ -80,12 +76,9 @@ const Settings = () => {
 
     const previewImg = (e) => {
         const reader = new FileReader();
-
         reader.onloadend = (e) => {
             setProfileImage(e.target.result);
-            // console.log(e.target.result);
         };
-
         reader.readAsDataURL(e.target.files[0]);
     };
 
@@ -114,9 +107,7 @@ const Settings = () => {
         } finally {
             setLoading(false)
             window.location.reload();
-
         }
-  
     };
 
     return (
@@ -136,14 +127,12 @@ const Settings = () => {
                     >
                         Upload your photo and personal details here.
                     </Typography>
-
                     <Paper
                         sx={{
                             m: { xs: 0, sm: 2, md: 5 },
                             p: { xs: 2, sm: 3, md: 5 },
                             border: "2px solid #dadce3",
                             borderRadius: (theme) => theme.shape.borderRadius,
-                            // bgcolor: "inherit",
                         }}
                         elevation={0}
                     >
@@ -245,26 +234,16 @@ const Settings = () => {
                             <LoadingButton
                                 fullWidth
                                 variant="contained"
-                                // onClick={saveProfile}
                                 type="submit"
                                 loading={loading}
                             >
                                 {loading ? "loading" : "Save"}
                             </LoadingButton>
-
-
                         </Stack>
-
-                        <Box>
-
-                        </Box>
                     </Paper>
-
                     { user?.ismentor && <MentorSettings user={user} /> }
-
                 </Container>
             </Box>
-            
             <ChangePassword open={openChangePass} toggle={setOpenChangePass} />
         </React.Fragment>
     );

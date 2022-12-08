@@ -113,15 +113,9 @@ const Filter = ({ mentors, setMentors, filtered, setFiltered, setOnFilter }) => 
 
     const handleSearch = e => {
         e.preventDefault();
-
-        // console.log(search.length);
-
         axios.get(`${baseUrl}/search/mentor`, { params: { query: search }})
         .then( res => {
-            // console.log(res.data.mentors);
             setMentors(res.data.mentors)
-            // setOnFilter(false);
-
         })
         .catch( err => {
             console.error(err);

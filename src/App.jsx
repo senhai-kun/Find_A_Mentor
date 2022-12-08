@@ -7,7 +7,6 @@ import GlobalListener from "./globals/GlobalListener";
 import ScrollToTop from "./globals/ScrollToTop";
 
 function App() {
-
     return (
         <React.Fragment>
             <Provider store={store}>

@@ -179,8 +179,6 @@ const MentorProfile = () => {
         setApply(false);
     }
 
-    console.log("enroll: ",  enrolled)
-
     return loading ? <Loading /> : (
         <React.Fragment>
             <Header title={`${mentor?.firstname} ${mentor?.lastname}`} />
@@ -213,14 +211,6 @@ const MentorProfile = () => {
                                 <Typography variant="inherit" fontWeight={300}>
                                     {mentor?.profession}
                                 </Typography>
-                                {/* <Chip
-                                    icon={<VerifiedIcon />}
-                                    label="Verified Mentor"
-                                    sx={{ mt: 1 }}
-                                    color="success"
-                                    size="small"
-                                    variant="outlined"
-                                /> */}
                             </Box>
 
                             <Stack direction="row" flexWrap="wrap" gap={1}>
@@ -280,37 +270,11 @@ const MentorProfile = () => {
                                 <Stack direction="row" gap={2} flexWrap="wrap">
                                     {mentor?.details?.skills.map((i, e) => (
                                         <React.Fragment key={e}>
-                                            {/* <Chip
-                                                label={i}
-                                                color="primary"
-                                                onClick={() => console.log("asd")}
-                                            /> */}
                                             <Typography sx={{ borderRadius: 6, p: 1, pr: 2, pl: 2, border: "1px solid black" }} variant="button" >{i}</Typography>
                                         </React.Fragment>
                                     ))}
                                 </Stack>
                             </Section>
-
-                            {/* <Section title="Social Links">
-                                <Stack direction="column" gap={1}>
-                                    <Details
-                                        icon={<FacebookIcon color="info" />}
-                                        label="monica_badiu"
-                                    />
-                                    <Details
-                                        icon={<InstagramIcon color="info" />}
-                                        label="_badiumonica"
-                                    />
-                                    <Details
-                                        icon={<TwitterIcon color="info" />}
-                                        label="badiumonica_"
-                                    />
-                                    <Details
-                                        icon={<LinkedInIcon color="info" />}
-                                        label="monica_badiu"
-                                    />
-                                </Stack>
-                            </Section> */}
                         </Box>
 
                         <Box width="100%">
@@ -362,8 +326,6 @@ const MentorProfile = () => {
                                     {mentor?.details?.about}
 
                                 </Typography>
-                                {/* <span>Read More...</span> */}
-
                             </Section>
                         </Box>       
                 </Container>
@@ -384,6 +346,4 @@ const Section = ({ title, children }) => {
     );
 };
 
-// f2f4fb
-// acd2ec
 export default MentorProfile;

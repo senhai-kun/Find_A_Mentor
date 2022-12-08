@@ -22,14 +22,6 @@ const MentorSchedule = ({ setTo, setSetTo, menteeList, from, setFrom, to, setToE
                     onChange={ e => setSetTo(e.target.value)}
                     sx={{ mb: 3 }} 
                     size="small"
-                    // renderValue={ (selected) => {
-                    //     if (selected) {
-                    //         return <em>Select an email you wish to send</em>;
-                    //     }
-                    //     console.log("selected:", selected)
-
-                    //     return selected;
-                    // }}
                 >
                     {menteeList?.map( (i, index) => (
                         <MenuItem key={index} value={i?._id?.email} >{i?._id?.email}</MenuItem>

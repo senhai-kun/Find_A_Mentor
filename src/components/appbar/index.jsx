@@ -219,7 +219,6 @@ const Header = () => {
                                 </Button>
 
                                 <Button
-                                    // startIcon={<AccountCircleRoundedIcon />}
                                     type="text"
                                     color="inherit"
                                     onClick={navigateProfile}
@@ -228,7 +227,6 @@ const Header = () => {
                                 </Button>
 
                                 <Button
-                                    // startIcon={<AccountCircleRoundedIcon />}
                                     type="text"
                                     color="inherit"
                                     onClick={navigateSettings}

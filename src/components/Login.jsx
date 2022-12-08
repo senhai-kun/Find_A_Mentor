@@ -136,7 +136,6 @@ const Login = () => {
                         }}
                         variant="outlined"
                         focused
-                        // required
                     />
 
                     <TextField
@@ -175,9 +174,7 @@ const Login = () => {
                                         : textColorPri,
                             },
                         }}
-                        // variant='outlined'
                         focused
-                        // required
                     />
                 </Stack>
                 <Box sx={{ textAlign: "right", mt: 2 }} >

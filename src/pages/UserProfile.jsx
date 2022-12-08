@@ -54,19 +54,6 @@ import MentorSchedule from "../components/Dashboard/mentor/MentorSchedule";
 import MenteeList from "../components/Dashboard/mentor/MenteeList";
 import ChatRoundedIcon from '@mui/icons-material/ChatRounded';
 
-const Details = ({ icon, label, variant, size }) => {
-    return (
-        <Chip
-            label={label}
-            icon={icon}
-            onClick={() => console.log("asd")}
-            variant={variant}
-            size={size}
-            color="primary"
-        />
-    );
-};
-
 const UserProfile = () => {
     const user = useSelector(userData);
     const navigate = useNavigate();
@@ -82,7 +69,6 @@ const UserProfile = () => {
     const [from, setFrom] = useState(null);
     const [to, setToEnd] = useState(null);
     const [open, setOpen] = useState(false);
-    const [alertMsg, setAlertMsg] = useState("");
 
     const [loading, setLoading] = useState(true);
 
@@ -99,26 +85,18 @@ const UserProfile = () => {
                     withCredentials: true,
                     cancelToken: source.token
                 } )
-
-                // console.log("user prof: ", user_profile.data.mentor.mentee);
-
                 if( user_profile.data.ismentor ) {
-                    // console.log("filter accepted: ", user_profile.data.mentor.mentee.filter( i => i.status.mode === "pending"));
                     setMenteeList(user_profile.data.mentor.mentee.filter( i => i.status.mode === "accepted"));
                     setPendingList(user_profile.data.mentor.mentee.filter( i => i.status.mode === "pending"))
                     setAppointments(user_profile.data.mentor.mentee.filter( i => i.schedule.length !== 0 && i.status.mode === "accepted") );
                     setScheduleList(user_profile.data.mentor.mentee.map( i => i.schedule.filter( s => s._id ) ).flat())
                 } else {
-                    // mentee profile dashboard
-                    // console.log("mentor: ", user_profile.data.mentee.map( i => ({ ...i, mentee: i.mentee.filter( data => data. )})))
-                    // console.log("get: ", user_profile.data.mentee.map( i => ({ ...i, mentee: i.mentee.filter( data => data._id.ref_id === user.ref_id ) }) ).sort( (a,b) => Number(a.map( mentee => mentee.map( sched => sched.map( i => i._id.approved ) ) )) - Number(b.map( mentee => mentee.map( sched => sched.map( i => i._id.approved ) ) )) ) );
                     setMentor(user_profile.data.mentee);
                     setAppointments(user_profile.data.mentee.map( i => ({ ...i, mentee: i.mentee.filter( data => data._id.ref_id === user.ref_id && data.status.mode === "accepted" ) }) ));
                     setMenteeSched(user_profile.data.mentee.map( i => ({ ...i, mentee: i.mentee.filter( data => data._id.ref_id === user.ref_id && data.status.mode === "accepted" ).map( a => ({ ...a, schedule: a.schedule.filter( sched => sched._id.approved === false ) })) }) ));
                 }
             } catch (error) {
                 console.log(error);
-                // alert(`Internal server error: ${error}`);
             } finally {
                 setLoading(false);
             }
@@ -132,24 +110,18 @@ const UserProfile = () => {
     }, [user])
 
     const handleMentorSchedule = async () => {
-
         // handle schedule over
         if( setTo !== "" && from !== null && to !== null ) { // if all have values
-
             if ( menteeList.map( i => i.schedule.map( s => s._id ).some( i => {
                 return moment(from).isBetween(moment(i.from),moment(i.to)) ;
             }) )[0] ) {
                 console.log("Schedule overlapped!");    
                 setOpen(true)
-
             } else {
                 console.log("Schedule not overlapped!");
                 await saveSchedule();
             }
-            
-
         }
-
     }
 
     const saveSchedule = async () => {
@@ -190,7 +162,6 @@ const UserProfile = () => {
                             alt={user?.firstname}
                             sx={{ width: 100, height: 100 }}
                         />
-
                         <Stack
                             direction="column"
                             justifyContent="space-between"
@@ -205,9 +176,7 @@ const UserProfile = () => {
                                     <Typography variant="h4" fontWeight="bold" textTransform="capitalize" align="left">
                                         {user?.firstname} {user?.lastname}
                                     </Typography>
-                                    
                                 </Stack>
-
                                 <Typography variant="inherit" fontWeight={300} sx={{ opacity: 0.8 }}>
                                     {user?.profession}
                                 </Typography>
@@ -238,9 +207,7 @@ const UserProfile = () => {
                     >
                         <Section title="Appointments" subtitle="Schedule's Lists">
                             <Stack direction="column" gap={2}>
-
                                 {user?.ismentor ? <MentorAppointment appointment={appointments} /> : <MenteeAppointment appointment={appointments} user={user} /> }
-            
                             </Stack>
                         </Section>
                         
@@ -278,7 +245,6 @@ const UserProfile = () => {
             
             <Dialog
                 open={open}
-                // onClose={ () => setOpen(false) }
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
                 fullWidth

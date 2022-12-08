@@ -96,7 +96,6 @@ const revalidateSession = createAsyncThunk(
                 signal
             });
             // get user data
-            // dispatch(login(ses.data));
             console.log("ses: ",ses.data)
             dispatch(setUser(ses.data.user));
 
@@ -112,19 +111,15 @@ const revalidateSession = createAsyncThunk(
 
 export const loginUser = ({ success, navigate, location }) => async (dispatch) => {
         console.log("Apply refresh to all tabs after login"); // only need to refresh page to validate login
-           
         dispatch(login(success));
-        // dispatch(reload());
         location.state !== null
             ? navigate(location.state) // navigate to last visited page
             : navigate("/search");
-        // dispatch(checkSession());
     };
 
 export const registerUser = ({ navigate, data }) => (dispatch) => {
         console.log("registering user....");
         dispatch(login(data));
-
         if ( data.ismentor ) {
             navigate("/getting_started");
         } else {
@@ -132,11 +127,9 @@ export const registerUser = ({ navigate, data }) => (dispatch) => {
         }
     };
 
-
 export const logoutUser = (navigate) => async (dispatch) => {
     try {
         const res = await axios.get(`${baseUrl}/account/logout`);
-        
         console.log("try: ",res.data)
         if ( res.data.logout ) {
             localStorage.removeItem("fam-id");

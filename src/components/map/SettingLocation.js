@@ -15,7 +15,6 @@ const SettingLocation = ({ defaultAddress, location, setLocation }) => {
     const [address, setAddress] = useState(defaultAddress);
 
     const MyMap = () => {
-
         useMapEvents({
             click: (e) => {
                 console.log(e);
@@ -29,7 +28,6 @@ const SettingLocation = ({ defaultAddress, location, setLocation }) => {
                         'X-RapidAPI-Host': 'trueway-geocoding.p.rapidapi.com'
                     }
                     };
-                    
                     axios.request(options).then(function (response) {
                     console.log("address: ",response.data);
                         console.log(response.data.results[0].locality, response.data.results[0].area, response.data.results[0].country);
