@@ -1,7 +1,7 @@
 # GETTING STARTED with MENTOR VERSE
 
 ## REQUIREMENTS
-Code Editor (VS Code) preferred
+Code Editor (VS Code) 
 NodeJS
 
 ### Initialization
